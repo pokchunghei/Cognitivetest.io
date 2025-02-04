@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>測試結果記錄</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .record { margin-bottom: 20px; }
+        h2 { font-weight: bold; }
+        .delete-button {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        #chartContainer {
+            width: 100%;
+            height: 400px;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>測試結果記錄</h1>
+        
+        <h2>意見反饋</h2>
+        <div id="feedbackRecordsContainer"></div>
+        <button id="deleteFeedbackButton" class="delete-button">刪除所有意見反饋</button>
+
+        <h2>圖表統計</h2>
+        <canvas id="chartContainer"></canvas>
+
+        <h2>測試記錄</h2>
+        <div id="testRecordsContainer"></div>
+    </div>
+
+    <script>
+        // 獲取測試記錄和意見反饋
+        let testRecords = JSON.parse(localStorage.getItem('mbtiScoresHistory')) || [];
+        let feedbackRecords = JSON.parse(localStorage.getItem('feedbackRecords')) || [];
+
+        // 顯示意見反饋
+        function displayFeedbackRecords() {
+            const feedbackContainer = document.getElementById('feedbackRecordsContainer');
+            feedbackContainer.innerHTML = ''; // 清空容器
+            
+            feedbackRecords.forEach(feedback => {
+                const feedbackDiv = document.createElement('div');
+                feedbackDiv.className = 'record';
+                feedbackDiv.innerText = feedback.feedback; // 顯示意見內容
+                feedbackContainer.appendChild(feedbackDiv);
+            });
+        }
+
+        // 顯示測試記錄
+        function displayTestRecords() {
+            const testContainer = document.getElementById('testRecordsContainer');
+            testContainer.innerHTML = ''; // 清空容器
+            
+            testRecords.forEach((record, index) => {
+                const recordDiv = document.createElement('div');
+                recordDiv.className = 'record';
+                recordDiv.innerHTML = `Ne: ${record.scores.Ne}, Ni: ${record.scores.Ni}, Se: ${record.scores.Se}, Si: ${record.scores.Si}, Te: ${record.scores.Te}, Ti: ${record.scores.Ti}, Fe: ${record.scores.Fe}, Fi: ${record.scores.Fi}`;
+                
+                // 添加刪除按鈕
+                const deleteButton = document.createElement('button');
+                deleteButton.innerText = '刪除';
+                deleteButton.className = 'delete-button';
+                deleteButton.onclick = function() {
+                    deleteRecord(index);
+                };
+                
+                recordDiv.appendChild(deleteButton);
+                testContainer.appendChild(recordDiv);
+                testContainer.appendChild(document.createElement('br')); // 隔一行
+            });
+        }
+
+        // 刪除特定測試記錄
+        function deleteRecord(index) {
+            testRecords.splice(index, 1); // 刪除該記錄
+            localStorage.setItem('mbtiScoresHistory', JSON.stringify(testRecords)); // 更新 localStorage
+            displayTestRecords(); // 重新顯示測試記錄
+        }
+
+        // 計算平均分
+        function calculateAverages() {
+            const totals = {
+                Ne: 0, Se: 0, Si: 0, Ni: 0,
+                Te: 0, Ti: 0, Fe: 0, Fi: 0
+            };
+            const count = testRecords.length;
+
+            testRecords.forEach(record => {
+                totals.Ne += record.scores.Ne;
+                totals.Se += record.scores.Se;
+                totals.Si += record.scores.Si;
+                totals.Ni += record.scores.Ni;
+                totals.Te += record.scores.Te;
+                totals.Ti += record.scores.Ti;
+                totals.Fe += record.scores.Fe;
+                totals.Fi += record.scores.Fi;
+            });
+
+            const averages = {
+                Ne: totals.Ne / count || 0,
+                Se: totals.Se / count || 0,
+                Si: totals.Si / count || 0,
+                Ni: totals.Ni / count || 0,
+                Te: totals.Te / count || 0,
+                Ti: totals.Ti / count || 0,
+                Fe: totals.Fe / count || 0,
+                Fi: totals.Fi / count || 0
+            };
+
+            return averages;
+        }
+
+        // 繪製圖表
+        function renderChart() {
+            const averages = calculateAverages();
+            const ctx = document.getElementById('chartContainer').getContext('2d');
+            const chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Ne', 'Se', 'Si', 'Ni', 'Te', 'Ti', 'Fe', 'Fi'],
+                    datasets: [{
+                        label: '平均分',
+                        data: [
+                            averages.Ne,
+                            averages.Se,
+                            averages.Si,
+                            averages.Ni,
+                            averages.Te,
+                            averages.Ti,
+                            averages.Fe,
+                            averages.Fi
+                        ],
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // 刪除所有意見反饋
+        document.getElementById('deleteFeedbackButton').onclick = function() {
+            localStorage.removeItem('feedbackRecords');
+            feedbackRecords = []; // 清空當前意見反饋
+            displayFeedbackRecords(); // 重新顯示
+            alert('所有意見反饋已刪除。');
+        };
+
+        displayFeedbackRecords(); // 顯示意見反饋
+        displayTestRecords(); // 顯示測試記錄
+        renderChart(); // 繪製圖表
+    </script>
+</body>
+
+
+
+
+
+
+
+
+
