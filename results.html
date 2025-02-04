@@ -8,7 +8,7 @@
         body { font-family: Arial, sans-serif; }
         .record { margin-bottom: 20px; }
         h2 { font-weight: bold; }
-        .delete-button {
+        .delete-button, .reset-button {
             background-color: #f44336;
             color: white;
             border: none;
@@ -16,16 +16,25 @@
             cursor: pointer;
             margin-left: 10px;
         }
+        .reset-button {
+            background-color: #2196F3; /* 藍色背景 */
+        }
         #chartContainer {
             width: 100%;
             height: 400px;
+        }
+        .home-link {
+            display: block;
+            margin-bottom: 20px;
+            font-size: 18px;
+            color: #2196F3;
+            text-decoration: none;
         }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
 </head>
 <body>
-	<a href="index.html"
-class="home-link">返回首頁</a>
+    <a href="index.html" class="home-link">返回首頁</a>
     <div class="container">
         <h1>測試結果記錄</h1>
         
@@ -35,15 +44,17 @@ class="home-link">返回首頁</a>
 
         <h2>圖表統計</h2>
         <canvas id="chartContainer"></canvas>
+        <button id="resetButton" class="reset-button">Reset</button>
 
         <h2>測試記錄</h2>
         <div id="testRecordsContainer"></div>
     </div>
 
     <script>
-        // 獲取測試記錄和意見反饋
         let testRecords = JSON.parse(localStorage.getItem('mbtiScoresHistory')) || [];
         let feedbackRecords = JSON.parse(localStorage.getItem('feedbackRecords')) || [];
+        let chart; // 用於存儲圖表對象
+        let averages = {}; // 用於存儲平均值
 
         // 顯示意見反饋
         function displayFeedbackRecords() {
@@ -87,6 +98,7 @@ class="home-link">返回首頁</a>
             testRecords.splice(index, 1); // 刪除該記錄
             localStorage.setItem('mbtiScoresHistory', JSON.stringify(testRecords)); // 更新 localStorage
             displayTestRecords(); // 重新顯示測試記錄
+            renderChart(); // 重新繪製圖表
         }
 
         // 計算平均分
@@ -124,9 +136,12 @@ class="home-link">返回首頁</a>
 
         // 繪製圖表
         function renderChart() {
-            const averages = calculateAverages();
+            averages = calculateAverages();
             const ctx = document.getElementById('chartContainer').getContext('2d');
-            const chart = new Chart(ctx, {
+            if (chart) {
+                chart.destroy(); // 若已存在圖表則銷毀
+            }
+            chart = new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: ['Ne', 'Se', 'Si', 'Ni', 'Te', 'Ti', 'Fe', 'Fi'],
@@ -176,9 +191,10 @@ class="home-link">返回首頁</a>
                 displayTestRecords(); // 重新顯示測試記錄
             }
         };
-		
+
         displayFeedbackRecords(); // 顯示意見反饋
         displayTestRecords(); // 顯示測試記錄
         renderChart(); // 繪製圖表
     </script>
 </body>
+</html>
