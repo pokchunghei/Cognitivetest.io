@@ -163,17 +163,39 @@
             alert('所有意見反饋已刪除。');
         };
 
+        // Reset 按鈕功能
+        document.getElementById('resetButton').onclick = function() {
+            const confirmReset = confirm("Confirm to reset data?");
+            if (confirmReset) {
+                // 清空測試記錄
+                testRecords = [];
+                localStorage.setItem('mbtiScoresHistory', JSON.stringify(testRecords)); // 更新 localStorage
+                renderChart(); // 重新繪製圖表
+                displayTestRecords(); // 重新顯示測試記錄
+            }
+        };
+		
         displayFeedbackRecords(); // 顯示意見反饋
         displayTestRecords(); // 顯示測試記錄
         renderChart(); // 繪製圖表
     </script>
 </body>
 
+        // Reset 按鈕功能
+        document.getElementById('resetButton').onclick = function() {
+            const confirmReset = confirm("Confirm to reset data?");
+            if (confirmReset) {
+                // 清空測試記錄
+                testRecords = [];
+                localStorage.setItem('mbtiScoresHistory', JSON.stringify(testRecords)); // 更新 localStorage
+                renderChart(); // 重新繪製圖表
+                displayTestRecords(); // 重新顯示測試記錄
+            }
+        };
 
-
-
-
-
-
-
-
+        displayFeedbackRecords(); // 顯示意見反饋
+        displayTestRecords(); // 顯示測試記錄
+        renderChart(); // 繪製圖表
+    </script>
+</body>
+</html>
