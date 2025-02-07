@@ -289,7 +289,7 @@ class="home-link">返回首頁</a>
         </div>
 
         <div class="question">
-            <p>如果別人的經歷無法觸動你，你便難以和他共情（對他的喜或悲身同感受）。</p>
+            <p>會代入自己沒有經歷過的事去共情（對他的喜或悲身同感受）。</p>
             <div class="slider-container">
                 <input type="range" min="0" max="5" value="0" class="slider" id="slider-Fi1">
                 <div class="slider-labels">
@@ -491,7 +491,7 @@ class="home-link">返回首頁</a>
             scores.Te += parseInt(document.getElementById('slider-Te1').value);
             scores.Fe += parseInt(document.getElementById('slider-Fe1').value);
             scores.Ti += parseInt(document.getElementById('slider-Ti1').value);
-            scores.Fi += parseInt(document.getElementById('slider-Fi1').value);
+            scores.Fi += 5 - parseInt(document.getElementById('slider-Fi1').value);
             scores.Se += parseInt(document.getElementById('slider-Se2').value);
             scores.Ne += parseInt(document.getElementById('slider-Ne2').value);
             scores.Si += parseInt(document.getElementById('slider-Si2').value);
@@ -564,6 +564,3 @@ class="home-link">返回首頁</a>
     </script>
 </body>
 </html>
-   
-
-
