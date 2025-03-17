@@ -52,12 +52,20 @@
       background-color: #e7f3fe;
       border-left: 6px solid #2196F3;
     }
+    /* 顯示 MBTI 選擇、配對描述用的區域 */
+    .mbti-display {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #fff9e6;
+      border-left: 6px solid #ffc107;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>MBTI 測試結果</h1>
 
+    <!-- 棒形圖容器 -->
     <div id="results"></div>
 
     <h2>分數表</h2>
@@ -107,34 +115,44 @@
       <h3>性格分析</h3>
       <p></p>
     </div>
+
+    <!-- 這裡是用來顯示最終 MBTI 選擇和配對描述的區塊 -->
+    <div class="mbti-display">
+      <h2><strong>MBTI</strong></h2>
+      <p>第一選擇：<span id="finalFirstChoice"></span></p>
+      <p>第二選擇：<span id="finalSecondChoice"></span></p>
+    </div>
+
+    <div class="analysis" id="pairDescription">
+      <h3>功能配對描述</h3>
+      <p id="synergyText"></p>
+    </div>
   </div>
 
   <script>
-    // 從 localStorage 獲取分數
+    // --------------- 1) 讀取分數，顯示棒形圖、分數表、排序 ---------------
     const scores = JSON.parse(localStorage.getItem('mbtiScores')) || {
       Ne: 0, Ni: 0, Se: 0, Si: 0, Te: 0, Ti: 0, Fe: 0, Fi: 0
     };
-
     const maxScore = 25; // 每個功能的最高分數
 
-    // 顯示分數和生成棒形圖
     const resultsDiv = document.getElementById('results');
-    for (const [key, value] of Object.entries(scores)) {
+    for (const [func, value] of Object.entries(scores)) {
       const bar = document.createElement('div');
       bar.className = 'bar';
       bar.innerHTML = `
-        <div class="bar-label">${key}</div>
-        <div class="bar-fill" style="width: ${value * 100 / maxScore}%; background-color: ${getColor(key)};">
+        <div class="bar-label">${func}</div>
+        <div class="bar-fill" style="width: ${value * 100 / maxScore}%; background-color: ${getColor(func)};">
           ${value}
         </div>
       `;
       resultsDiv.appendChild(bar);
 
-      // 填充表格
-      document.getElementById(`score-${key}`).innerText = value;
+      // 同步填充到分數表
+      const td = document.getElementById('score-' + func);
+      if (td) td.innerText = value;
     }
 
-    // 生成顏色
     function getColor(key) {
       const colors = {
         Ne: '#FF5733',
@@ -146,34 +164,231 @@
         Fe: '#FF33D1',
         Fi: '#FF33B5'
       };
-      return colors[key];
+      return colors[key] || '#aaa';
     }
 
-    // 計算排序
-    const ranking = Object.entries(scores).sort((a, b) => b[1] - a[1]).map(entry => entry[0]).join(' > ');
-    document.getElementById('ranking').innerText = ranking;
+    // 排序
+    const sortedFunctions = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+    const rankingText = sortedFunctions.map(entry => entry[0]).join(' > ');
+    document.getElementById('ranking').innerText = rankingText;
 
-    // 性格分析根據分數生成描述
+    // 簡易分析（原本示範）
     const analysisText = generateAnalysis(scores);
     document.getElementById('analysis').querySelector('p').innerText = analysisText;
 
-    // 根據分數生成性格分析
     function generateAnalysis(scores) {
-      let analysis = '';
-      // 根據分數簡單生成分析，可根據需要進行調整
+      let ans = '';
       if (scores.Ne > scores.Si) {
-        analysis += '你是一個充滿創意和想像力的人，喜歡探索新的可能性。';
+        ans += '你是一個充滿創意和想像力的人，喜歡探索新的可能性。';
       } else {
-        analysis += '你傾向於依賴過去的經驗來做決策，並在熟悉的環境中感到舒適。';
+        ans += '你傾向於依賴過去的經驗來做決策，並在熟悉的環境中感到舒適。';
       }
-      analysis += ' ';
+      ans += ' ';
       if (scores.Te > scores.Fe) {
-        analysis += '你在工作中偏向於理性和邏輯，重視效率。';
+        ans += '你在工作中偏向於理性和邏輯，重視效率。';
       } else {
-        analysis += '你在社交中更注重他人的感受，努力促進和諧。';
+        ans += '你在社交中更注重他人的感受，努力促進和諧。';
       }
-      return analysis;
+      return ans;
     }
+
+    // --------------- 2) MBTI 產生邏輯：找最高、次高分功能 → 兩個候選 ---------------
+    const topFuncName = sortedFunctions[0][0];     // 第一高分功能
+    const secondFuncName = sortedFunctions[1][0];  // 第二高分功能
+
+    // 依功能找出搭配的功能，組合出 MBTI
+    function getMBTICandidate(funcName) {
+      let orientation, letter2, letter3, letter4, pairedFunc;
+      // 分成4類：
+      if (['Ne', 'Se'].includes(funcName)) {
+        orientation = 'E';
+        letter2 = funcName[0].toUpperCase();  // N or S
+        pairedFunc = (scores.Ti >= scores.Fi) ? 'Ti' : 'Fi';
+        letter3 = pairedFunc[0].toUpperCase(); // T or F
+        letter4 = 'P';  // 外傾感知 → P
+      }
+      else if (['Te', 'Fe'].includes(funcName)) {
+        orientation = 'E';
+        letter3 = funcName[0].toUpperCase(); // T or F
+        pairedFunc = (scores.Ni >= scores.Si) ? 'Ni' : 'Si';
+        letter2 = pairedFunc[0].toUpperCase(); // N or S
+        letter4 = 'J';  // 外傾判斷 → J
+      }
+      else if (['Ni', 'Si'].includes(funcName)) {
+        orientation = 'I';
+        letter2 = funcName[0].toUpperCase(); // N or S
+        pairedFunc = (scores.Te >= scores.Fe) ? 'Te' : 'Fe';
+        letter3 = pairedFunc[0].toUpperCase(); // T or F
+        letter4 = 'J';  // 內傾感知 → 外傾判斷(Te/Fe) → J
+      }
+      else if (['Ti', 'Fi'].includes(funcName)) {
+        orientation = 'I';
+        letter3 = funcName[0].toUpperCase(); // T or F
+        pairedFunc = (scores.Ne >= scores.Se) ? 'Ne' : 'Se';
+        letter2 = pairedFunc[0].toUpperCase(); // N or S
+        letter4 = 'P';  // 內傾判斷 → 外傾感知(Ne/Se) → P
+      }
+      // 分數總和用於比較
+      const sumScores = scores[funcName] + scores[pairedFunc];
+      const mbti = orientation + letter2 + letter3 + letter4;
+      return { mbti, sumScores };
+    }
+
+    const candidate1 = getMBTICandidate(topFuncName);
+    const candidate2 = getMBTICandidate(secondFuncName);
+
+    // 比較兩個候選 MBTI 的 2功能分數
+    let finalFirstChoice, finalSecondChoice;
+    if (candidate1.sumScores >= candidate2.sumScores) {
+      finalFirstChoice = candidate1.mbti;
+      finalSecondChoice = candidate2.mbti;
+    } else {
+      finalFirstChoice = candidate2.mbti;
+      finalSecondChoice = candidate1.mbti;
+    }
+
+    document.getElementById('finalFirstChoice').innerText = finalFirstChoice;
+    document.getElementById('finalSecondChoice').innerText = finalSecondChoice;
+
+    // --------------- 3) 組合「段落」的字典們 ---------------
+    // 這裡是 8 個功能的第一段與第二段描述
+    const functionParagraphs = {
+      Ne1: "你是一個想像力豐富的人，經常有天馬行空的想法，認為世界有許多可能性，思維跳脫、行事奇特，也許身邊有人會認為你是一名瘋子！",
+      Ne2: "你的想像力不錯，有時有天馬行空的想法，可以跳出框框，不被已有思維局限。",
+
+      Ni1: "你是一個洞察力強 Insightful 的人，善於理解和組織無法言語的概念，對抽象嘅事物有獨特深刻的見解，專注熱愛的事情時也可以廢寢忘餐，我猜你也是一名藝術家/哲學家吧！",
+      Ni2: "你的洞察力不錯，有時可以理解和組織一些無法言語的概念，給出獨特且有深度的見解。",
+
+      Se1: "你是一個活在當下的人，歡迎各種新鮮的體驗，就算take risk也渴望嘗試新事物，而且你也喜歡邀約朋友，或許是一名社交恐怖分子！",
+      Se2: "你有時喜歡嘗試新鮮的體驗，約見朋友，嘗試新餐廳和遊覽新地方，躲在家中還不是你的作風呢！",
+
+      Si1: "你是一個觀察力強的人，善於記住過去經歷中的視覺細節，對於新的想法和決定會三思而後行，導致在社交時也不太善於回應，默默站在旁邊觀察就好。",
+      Si2: "你的觀察力不錯，有時能夠回憶起某次經歷的視覺細節。對於新的想法和決定，會先根據過去的經驗，思考是否適合自己。",
+
+      Te1: "你是一個善於管理的人，有足夠的理性去顧全大局，行事有計劃、追求效率，用最快的方法達到目的、解決問題，也可能會將身處的環境打理得整整齊齊。",
+      Te2: "你有不錯的領導才能，可以顧全大局作出決策，行事傾向先計畫和追求效率，儘快達到目的解決問題。",
+
+      Ti1: "你是一個分析力強的人，腦海裏有很清晰的邏輯，善於發現身邊事物的邏輯問題，愛問爲甚麽，著重分析和解決問題的過程，對事情的原因尋根究底，但經常容易與人辯論。",
+      Ti2: "你的分析能力不差，容易發現身邊事物的邏輯問題，解決問題時也較著重原因和過程多於結果。",
+
+      Fe1: "你是一個共情能力強的人，會顧及身邊人的感受，喜歡分享快樂，容易感受到他人的情緒，經常默默忍讓自我奉獻，只為令他人高興。",
+      Fe2: "你的共情能力不差，會顧及身邊人的感受，喜歡分享快樂，容易感受到他人的情緒，有時會犧牲自己的感受令大家高興。",
+
+      Fi1: "你是一個重視自己感受的人，懂得如何保護自己的感受，在適當的時候拒絕別人，做決定時也傾向考慮自己是否喜歡，但也時常收起情感不顯露人前。",
+      Fi2: "你頗重視自己的感受，在適當的時候懂得拒絕別人，做決定時也傾向考慮自己是否喜歡。"
+    };
+
+    // 這裡是「兩功能組合」的最後一段 (原先的 '這意味著...' 全部改成用 '-' 做 key)
+    const synergyLines = {
+      "Ne-Ni": "這意味著你不只腦中同時浮現各種新奇點子，還能以深層洞察將它們串聯在更宏大的脈絡中，面對未來或抽象事物時，你往往能一邊天馬行空、一邊洞悉深意，讓旁人既驚嘆又覺得捉摸不定。",
+      "Ne-Se": "這意味著你不只腦中閃過各種點子，還會馬上想去體驗，時常邀朋友一起大冒險，讓你彷彿精力無限的冒險家。",
+      "Ne-Si": "這意味著你在創意爆發的同時，還能適度回顧過往經驗，讓你的跳脫思維有一定根基，不至於過度冒進。",
+      "Ne-Te": "這意味著你在產生各式各樣的創意時，能同時以規劃和效率來推動執行，一邊想像無限可能，一邊擬定清晰步驟。",
+      "Ne-Ti": "這意味著你的天馬行空往往能附有嚴謹的理性驗證，一邊大開腦洞一邊冷靜推論，總能提出既新奇又合理的點子。",
+      "Ne-Fe": "這意味著你時常想與大家分享創意，並努力把他人帶入你的想像世界，讓周圍人深受你的熱情與活力感染。",
+      "Ne-Fi": "這意味著你對新事物充滿好奇，卻也對自我感受相當在意，能保有獨特的創意風格，同時不違背自己的內心。",
+      
+      "Ni-Ne": "這意味著你的深度思考與創意火花相互交織，想法既有深度又有廣度，展現出兼具哲學性和奇思妙想的魅力。",
+      "Ni-Se": "這意味著你在愛好冒險的同時，也對未來有敏銳直覺，能靜心思考大方向，又會勇敢投入當下體驗，形成動靜交融的獨特魅力。",
+      "Ni-Si": "這意味著你能用深層洞見結合過往經驗，既挖掘抽象意義又確保實際參考，形成一種穩重而深刻的思維模式。",
+      "Ni-Te": "這意味著你不只能觀察到深層趨勢，也能迅速規劃並行動，把自己的遠見化作落地成果。",
+      "Ni-Ti": "這意味著你在抽象領域能找出深度意義，同時又能進行縝密推理，將洞見落實到完備的理性框架。",
+      "Ni-Fe": "這意味著你的深層洞察同時包含對人心的敏銳感受，能一語道破他人的盲點，也能給予貼心的支持與安慰。",
+      "Ni-Fi": "這意味著你能藉由深度思考認識自己的欲望或理想，形成獨特的價值觀與個人風格，展現神秘而深刻的氣質。",
+      
+      "Se-Ne": "這意味著你行動派的同時，腦中還不斷蹦出新奇點子，成為活力滿滿的創意引爆者，帶著周圍人一起撒花玩耍。",
+      "Se-Ni": "這意味著你在愛好冒險的同時，也對未來有敏銳直覺，能靜心思考大方向，又會勇敢投入當下體驗，形成動靜交融的獨特魅力。",
+      "Se-Si": "這意味著你雖然敢衝、渴望嘗鮮，但也能根據過往教訓做好安全網，使行動更有依據，不會盲目行動。",
+      "Se-Te": "這意味著你在積極行動時，也能快速制定計畫並執行，帶領團隊或活動時特別幹練，反應敏捷又不失條理。",
+      "Se-Ti": "這意味著你能在享受當下體驗的同時，迅速拆解問題並找出漏洞，成為反應很快的行動派問題終結者。",
+      "Se-Fe": "這意味著你不只要自己玩得開心，也會留意大家的情緒狀態，努力帶動氣氛，成為聚會中的活力中心。",
+      "Se-Fi": "這意味著你敢衝敢玩，也懂得尊重內心底線，能夠勇敢迎接新鮮事物，卻不強迫自己做不情願的事，保持真實且自在的生活風格。",
+      
+      "Si-Ne": "這意味著你雖然重視過去經驗，但並不抗拒新點子，會先穩健評估，再逐步納入各種天馬行空的可能性。",
+      "Si-Ni": "這意味著你把過去觀察到的實際細節與深層洞見結合，既關注現實又能推演更深遠的意義。",
+      "Si-Se": "這意味著你在穩健評估的基礎上，仍能果敢把握當下，不至於一味保守，能同時享受新鮮體驗與安全感。",
+      "Si-Te": "這意味著你行事務實穩定，擅長彙整過去經驗並制定周全計劃，以最有效率的方式推進。",
+      "Si-Ti": "這意味著你做事紮實且注重依據，會整理各種細節後進行縝密推理，得出可靠結論。",
+      "Si-Fe": "這意味著你在累積各種觀察的同時，也體貼周圍人的情緒與需要，行事穩健而溫柔，讓人感到安心。",
+      "Si-Fi": "這意味著你根據過往經驗來判斷當下，並會仔細斟酌是否符合內心價值，雖然低調卻頗具堅定的個人立場。",
+      
+      "Te-Ne": "這意味著你在制定策略與追求效率的同時，也能從不同角度發掘新點子，兼具成果導向與創造力。",
+      "Te-Ni": "這意味著你的行事風格帶著遠見與深度，先預測大方向，再用計劃和執行力去實現。",
+      "Te-Se": "這意味著你不僅注重成果與效率，也能快速付諸行動並隨時調整，喜歡用實際體驗來驗證計劃可行性。",
+      "Te-Si": "這意味著你傾向依據過往成功經驗或數據，快速又穩定地規劃流程，執行效率極高並能避免風險。",
+      "Te-Ti": "這意味著你在擬定計劃時兼具效率與邏輯，追求最佳解並快速執行，對不合理之處毫不妥協。",
+      "Te-Fe": "這意味著你不只重視成果，還會關注團隊成員的情緒與需求，讓效率和人際和諧並行，成為帶著溫度的領導者。",
+      "Te-Fi": "這意味著你雖然在外看起來理性又能幹，內心卻相當堅持自身信念與感受，確保所做的一切與內在價值相符。",
+      
+      "Ti-Ne": "這意味著你在拆解問題時，腦中還會激發出許多新奇假設，能以邏輯結構為基礎，展開無限延伸的創意。",
+      "Ti-Ni": "這意味著你兼具縝密推理與深層洞見，能把邏輯與抽象模式整合成一套精妙的思維體系。",
+      "Ti-Se": "這意味著你會想在實際情境中馬上驗證自己的推理，透過直接觀察或親身嘗試來檢驗理論，並不斷修正結論。",
+      "Ti-Si": "這意味著你不僅堅持邏輯推理，也會引用過去實證和細節，讓結論更扎實可靠，行事謹慎而精準。",
+      "Ti-Te": "這意味著你在思考時注重邏輯完備，也能快速落實行動，兼具縝密性與效率，常常能提出最優解並立刻執行。",
+      "Ti-Fe": "這意味著你傾向在理性拆解問題的同時，也顧慮他人的感受，想用溫和的方式與人探討，不願傷害彼此和諧。",
+      "Ti-Fi": "這意味著你在堅持理性原則時，也會依據內心價值來做抉擇，既要理論通順也要符合內心信念。",
+      
+      "Fe-Ne": "這意味著你既關照別人的情緒，也擅長帶動氣氛，時常用新奇有趣的點子讓周圍人開心，成為社交圈的開心果。",
+      "Fe-Ni": "這意味著你不只溫暖周遭，更能敏銳感受對方的深層狀態，洞悉他人真正需要，給予貼心指引與安慰。",
+      "Fe-Se": "這意味著你在社交場合顯得活潑熱情，積極邀大家一起投入有趣活動，同時還觀察並照顧所有人的情緒，營造出充滿歡樂的氛圍。",
+      "Fe-Si": "這意味著你在體貼他人之餘，也會留心過往互動細節，努力讓下一次的相處更舒適周到，成為溫柔又穩健的陪伴者。",
+      "Fe-Te": "這意味著你帶領團隊時既關懷成員感受，也重視效率與成果，能營造互信氛圍並推動目標達成。",
+      "Fe-Ti": "這意味著你在關懷他人時，也能用理性角度剖析問題，力圖找出真正有效的解方，不僅感性也相當務實。",
+      "Fe-Fi": "這意味著你既想讓他人開心，也努力維護自我需求，若能拿捏好尺度，就能成為既體貼別人又善待自己的溫暖夥伴。",
+      
+      "Fi-Ne": "這意味著你內心世界豐富，對很多事情充滿好奇與熱情，既有獨到的想法又會謹慎保護自己的真實感受。",
+      "Fi-Ni": "這意味著你常常透過深度思考去探究自我內心與價值觀，在沉思之中發展出獨特觀點與感性深度。",
+      "Fi-Se": "這意味著你在選擇新鮮事物時，會根據個人喜好自由體驗，享受即時樂趣但也保有對自身感受的尊重，該拒絕時毫不勉強。",
+      "Fi-Si": "這意味著你往往透過過往的感受與記憶來決定現在的行動，既保護自己又依據累積經驗做判斷，讓你顯得低調卻有原則。",
+      "Fi-Te": "這意味著你在執行計劃時能兼顧內在信念，不願勉強自己去做違背良心的事，外表理性幹練，內心則保持堅定的自我。",
+      "Fi-Ti": "這意味著你對自我感受十分在意，也會用理性拆解自身想法，既考慮喜好又講求邏輯，有時難免在內心堅持上較為固執。",
+      "Fi-Fe": "這意味著你既想守護自己，也渴望照顧別人，有時需要在兩者之間拿捏分寸，但若能平衡好，就能成為既懂自己也懂他人的心靈支柱。"
+    };
+
+    // --------------- 4) 新規則：根據分數差 & 高分功能 >=18 與否，拼出最終文字 ---------------
+    const topScore = scores[topFuncName];
+    const secondScore = scores[secondFuncName];
+    const diff = topScore - secondScore;  // 預設第一功能分數 >= 第二功能
+
+    let finalParagraph = "";
+
+    // 準備 key
+    const synergyKey = topFuncName + '-' + secondFuncName;  // e.g. "Ne-Ni"
+    const synergyLine = synergyLines[synergyKey] || "";     // 沒有就給空字串
+
+    // 幫助選段的函式：傳入 "Ne" => 取 "Ne1" 或 "Ne2"
+    function getPara(funcName, version) {
+      return functionParagraphs[funcName + version] || "";
+    }
+
+    // 條件 #1: (diff ≤ 3) && (topScore ≥ 18)
+    if (diff <= 3 && topScore >= 18) {
+      // "func11 + 同時， + func21 + synergyLine"
+      finalParagraph = 
+        getPara(topFuncName, '1') 
+        + " 同時，" 
+        + getPara(secondFuncName, '1') 
+        + (synergyLine ? synergyLine : "");
+    }
+    // 條件 #2: (diff > 3) && (topScore ≥ 18)
+    else if (diff > 3 && topScore >= 18) {
+      // "func11 + 同時， + func22"
+      finalParagraph =
+        getPara(topFuncName, '1')
+        + " 同時，"
+        + getPara(secondFuncName, '2');
+    }
+    // 條件 #3: (topScore < 18)
+    else {
+      // "func12 + 同時， + func22"
+      finalParagraph =
+        getPara(topFuncName, '2')
+        + " 同時，"
+        + getPara(secondFuncName, '2');
+    }
+
+    // 最後顯示在 #synergyText
+    document.getElementById('synergyText').innerText = finalParagraph;
   </script>
 </body>
 </html>
