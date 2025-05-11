@@ -131,13 +131,31 @@
 
   <script>
     // --------------- 1) 讀取分數，顯示棒形圖、分數表、排序 ---------------
-    const scores = JSON.parse(localStorage.getItem('mbtiScores')) || {
+    const page2Scores = JSON.parse(localStorage.getItem('mbtiScores_page2')) || {
       Ne: 0, Ni: 0, Se: 0, Si: 0, Te: 0, Ti: 0, Fe: 0, Fi: 0
     };
-    const maxScore = 25; // 每個功能的最高分數
-
+  
+    const page3Scores = JSON.parse(localStorage.getItem('mbtiScores_page3')) || {
+      Ne: 0, Ni: 0, Se: 0, Si: 0, Te: 0, Ti: 0, Fe: 0, Fi: 0
+    };
+  
+    // 合併分數
+    const combinedScores = {};
+    for (const func of Object.keys(page2Scores)) {
+      combinedScores[func] = (page2Scores[func] || 0) + (page3Scores[func] || 0);
+    }
+  
+    const maxScore = 30; // 每個功能的最高分數
     const resultsDiv = document.getElementById('results');
-    for (const [func, value] of Object.entries(scores)) {
+  
+    // 創建外框
+    const outerDiv = document.createElement('div');
+    outerDiv.style.border = '2px solid #000'; // 外框樣式
+    outerDiv.style.padding = '10px';
+    outerDiv.style.borderRadius = '5px';
+    
+    // 顯示棒形圖
+    for (const [func, value] of Object.entries(combinedScores)) {
       const bar = document.createElement('div');
       bar.className = 'bar';
       bar.innerHTML = `
@@ -146,50 +164,23 @@
           ${value}
         </div>
       `;
-      resultsDiv.appendChild(bar);
-
-      // 同步填充到分數表
+      outerDiv.appendChild(bar);
+    }
+  
+    resultsDiv.appendChild(outerDiv); // 將外框添加到結果顯示區
+  
+    // 同步填充到分數表
+    for (const [func, value] of Object.entries(combinedScores)) {
       const td = document.getElementById('score-' + func);
       if (td) td.innerText = value;
     }
-
+  
     function getColor(key) {
-      const colors = {
-        Ne: '#FF5733',
-        Ni: '#33FF57',
-        Se: '#3357FF',
-        Si: '#FF33A1',
-        Te: '#FF9933',
-        Ti: '#33FFF6',
-        Fe: '#FF33D1',
-        Fi: '#FF33B5'
-      };
-      return colors[key] || '#aaa';
-    }
-
-    // 排序
-    const sortedFunctions = Object.entries(scores).sort((a, b) => b[1] - a[1]);
-    const rankingText = sortedFunctions.map(entry => entry[0]).join(' > ');
-    document.getElementById('ranking').innerText = rankingText;
-
-    // 簡易分析（原本示範）
-    const analysisText = generateAnalysis(scores);
-    document.getElementById('analysis').querySelector('p').innerText = analysisText;
-
-    function generateAnalysis(scores) {
-      let ans = '';
-      if (scores.Ne > scores.Si) {
-        ans += '你是一個充滿創意和想像力的人，喜歡探索新的可能性。';
+      if (key in page2Scores) {
+        return '#337ab7'; // 藍色表示 page2 分數
       } else {
-        ans += '你傾向於依賴過去的經驗來做決策，並在熟悉的環境中感到舒適。';
+        return '#FF5733'; // 紅色表示 page3 分數
       }
-      ans += ' ';
-      if (scores.Te > scores.Fe) {
-        ans += '你在工作中偏向於理性和邏輯，重視效率。';
-      } else {
-        ans += '你在社交中更注重他人的感受，努力促進和諧。';
-      }
-      return ans;
     }
 
     // --------------- 2) MBTI 產生邏輯：找最高、次高分功能 → 兩個候選 ---------------
