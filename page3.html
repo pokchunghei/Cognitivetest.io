@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>森林探險 MBTI 測驗</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+    .header {
+      background-color: #ffffff;
+      color: #333;
+      padding: 20px 30px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+      border-bottom: 1px solid #ccc;
+    }
+    .container {
+	  min-height: 800px;
+	  max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: white;
+    }
+    .page { display: none; }
+    .page.active { display: block; }
+    .question { margin-bottom: 20px; }
+    .slider { width: 100%; }
+    .slider-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+    }
+    .image-option {
+      width: 33%;
+      margin: 5px 1%;
+      cursor: pointer;
+      border: 3px solid transparent;
+    }
+    .image-option.selected { border-color: #4a90e2; }
+    .button {
+      background-color: #4a90e2;
+      color: white;
+      padding: 10px 20px;
+      margin-top: 20px;
+      font-size: 16px;
+      cursor: pointer;
+      border: none;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">森林探險 MBTI 測驗</div>
+  <div class="container">
+
+	<!-- page1: 選森林 + 滑桿 -->
+	<div class="page active" id="page1">
+	  <h2>前方有一座森林，你覺得它比較像：</h2>
+	  <img src="forest1.jpeg" id="forest1" class="image-option" onclick="selectForest(1)">
+	  <img src="forest2.jpeg" id="forest2" class="image-option" onclick="selectForest(2)">
+	  <div class="question" id="sliderBlock" style="display:none;">
+		<p>你有多想探索這座森林？（0 = 完全不想，5 = 非常想）</p>
+		<input type="range" min="0" max="5" value="0" class="slider" id="exploreSlider" oninput="showNextButton()">
+		<div class="slider-labels"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>
+	  </div>
+	  <button class="button" id="nextBtn1" style="display:none;" onclick="nextPage()">下一頁</button>
+	</div>
+
+	<!-- page2: 不太想探索的原因傾向於 -->
+	<div class="page" id="page2">
+	  <h2>不太想探索的原因傾向於：</h2>
+	  <input type="radio" name="reason" value="Si"> 安全考量<br>
+	  <input type="radio" name="reason" value="Ni"> 沒有探索精神<br>
+	  <button class="button" onclick="goBack()">上一頁</button>
+	  <button class="button" onclick="submitReason()">下一頁</button>
+	</div>
+
+	<!-- page3: 河流象徵 -->
+	<div class="page" id="page3">
+	  <h2>進到森林以後，你看到一條河流。你覺得它是通往：</h2>
+	  <input type="radio" id="opt1" name="scene" value="castle"> 一座神秘的城堡<br>
+	  <input type="radio" id="opt2" name="scene" value="Ni"> 一間隱世書店/小店<br>
+	  <input type="radio" id="opt3" name="scene" value="Si"> 時光倒流回到一件在意的往事<br>
+	  <button class="button" onclick="goBack()">上一頁</button>
+	  <button class="button" onclick="checkCastleQuestion()">下一頁</button>
+	</div>
+
+	<!-- page4: 城堡形容 -->
+	<div class="page" id="page4">
+	  <h2>對於這座城堡，何種形容更為貼切？</h2>
+	  <input type="radio" name="castle" value="Ne"> 充滿魔法、奇景，變幻莫測<br>
+	  <input type="radio" name="castle" value="Se"> 宏偉壯觀、美不勝收，有如聖托里尼/迪士尼一樣<br>
+	  <button class="button" onclick="goBack()">上一頁</button>
+	  <button class="button" onclick="submitCastle()">下一頁</button>
+	</div>
+
+	<!-- page5: 渡河問題偏好 -->
+	<div class="page" id="page5">
+	  <h2>走到一條河面前，有一個難題需要解決方可渡河。你希望是（請選擇一個）：</h2>
+	  <small>*你不必仔細想問題的解決辦法，只是傾向希望解決哪一個問題</small><br><br>
+	  <input type="radio" name="cross" value="Te"> 假設沒有橋，旁邊也有幾個人在等候，你需要帶領他們一同利用森林内的物資（如木頭）建造一艘船，方可渡河。<br>
+	  <input type="radio" name="cross" value="Ti"> 解答渡河難題（範例問題：人、狼、羊、白菜要從河的此岸藉由一艘船渡河至另一岸，其中只有人會划船，每次人只能帶一件東西搭船渡河，且狼和羊、羊和白菜不能在無人監視的情況下放在一起。在這些條件下，在最小渡河次數下如何才能讓大家都渡河至另一河岸？）<br>
+	  <input type="radio" name="cross" value="Fe"> 有一個人不敢過橋，需要協助他過橋（例如安撫他，鼓勵他）。<br>
+	  <input type="radio" name="cross" value="Fi"> 對著清澈的河流直面自己的内心，説出一些或許壓抑已久的真正感受，旁若無人，只有河流能聽見你的心聲。<br>
+	  <button class="button" onclick="goBack()">上一頁</button>
+	  <button class="button" onclick="submitSingle('cross')">下一頁</button>
+	</div>
+
+	<!-- page6: 合作造船 -->
+	<div class="page" id="page6">
+	  <h2>假設你選了造船渡河的難題。這時，有幾個旅人來到，他們將跟隨你一同造船。但大家都欠缺造船經驗和知識，當你快完成自己的部分時，你發現他們還是搞得一塌糊塗，但弄了這麼久，大家都累癱了。<br><br>這時候，你會：</h2>
+	  <input type="radio" name="team" value="Te"> 檢討安排是否恰當，有沒有更有效的方法完成。<br>
+	  <input type="radio" name="team" value="Fe"> 雖然很不情願，但大家都累癱了，我還是幫幫他們的忙儘快完成吧。<br>
+	  <input type="radio" name="team" value="Fi"> 我已經完成了自己的部分了，但他們竟然還沒完成？必須督促他們儘快完成自己的部分。<br>
+	  <input type="radio" name="team" value="Ti"> 我知道當我詢問他們的進度便難逃要幫忙的命運，所以我還是繼續鑽研自己的部分。<br>
+	  <button class="button" onclick="goBack()">上一頁</button>
+	  <button class="button" onclick="submitSingle('team')">下一頁</button>
+	</div>
+
+	<!-- page7: 同行邀請 -->
+	<div class="page" id="page7">
+	  <h2>他們邀請你結伴同行，你會：</h2>
+	  <input type="radio" id="opt71" name="join" value="Se"> 太好了，有朋友就高興！<br>
+	  <input type="radio" id="opt72" name="join" value="alone"> 不了，我也是一個獨來獨往的人<br>
+	  <button class="button" onclick="goBack()">上一頁</button>
+	  <button class="button" onclick="checkfriendQuestion()">下一頁</button>
+	</div>
+
+	<!-- page8: 合群朋友 -->
+	<div class="page" id="page8">
+	  <h2>如果發現這些人跟你感覺很合得來，你會</h2>
+	  <input type="radio" name="friend" value="Ne"> 感到一見如故，馬上滔滔不絕<br>
+	  <input type="radio" name="friend" value="Ni"> 除非真的很合吧，不然我怕他們干擾了我的行程<br>
+	  <input type="radio" name="friend" value="Si"> 剛剛才認識的人不太可信......還是分開走吧<br>
+	  <button class="button" onclick="goBack()">上一頁</button>
+	  <button class="button" onclick="submitfriend()">下一頁</button>
+	</div>
+
+	<!-- page9: 食物分配 -->
+	<div class="page" id="page9">
+	  <h2>他們最終決定了各自繼續旅程。臨別前，你發現剛才的船上有一些食物，你會怎樣分配給大家呢？</h2>
+	  <input type="radio" id="opt91" name="food" value="Te"> 按食物的重量，數量，平均分配<br>
+	  <input type="radio" id="opt92" name="food" value="Fe"> 看大家的意思，大家分得高興就好<br>
+	  <input type="radio" id="opt93" name="food" value="nomb"> 反正我分到自己滿意的分量就可以，其他人怎樣分不關我的事<br>
+	  <button class="button" onclick="goBack()">上一頁</button>
+	  <button class="button" onclick="checkfoodQuestion()">下一頁</button>
+	</div>
+
+	<!-- page10: 討回公道 -->
+	<div class="page" id="page10">
+	  <h2>這時候有人提出了一個完全不合理的分配方法，你被分配的食物不合你意，你會：</h2>
+	  <input type="radio" name="food" value="Fi"> 沒有得到自己應有的食物，覺得很委屈，很不開心<br>
+	  <input type="radio" name="food" value="Ti"> 與之理論，説服他爲止，要取回自己應得的<br>
+	  <button class="button" onclick="goBack()">上一頁</button>
+	  <button class="button" onclick="submitFood()">下一頁</button>
+	</div>
+
+	<!-- page11: 雲朵觀察 -->
+	<div class="page" id="page11">
+	  <h2>你還是拿到了應有的食物，感到神清氣爽 高興地離開。<br><br>這時候你會：</h2>
+	  <input type="radio" id="opt111" name="sky" value="look"> 抬頭看向天空<br>
+	  <input type="radio" id="opt112" name="sky" value="nope"> 不會<br>
+	  <button class="button" onclick="goBack()">上一頁</button>
+	  <button class="button" onclick="checkskyQuestion()">下一頁</button>
+	</div>
+
+	<div class="page" id="page11a">
+	  <h2>你看到的雲朵是：</h2>
+	  <img src="cloud1.jpeg" id="cloud1a" class="image-option" onclick="selectCloud('Ne', 'page12')">
+	  <img src="cloud2.jpeg" id="cloud2a" class="image-option" onclick="selectCloud('Se', 'page12')">
+	</div>
+
+	<div class="page" id="page11b">
+	  <h2>假如你看向天空，你看到的雲朵是：</h2>
+	  <img src="cloud1.jpeg" id="cloud1b" class="image-option" onclick="selectCloud('Ni', 'page12')">
+	  <img src="cloud2.jpeg" id="cloud2b" class="image-option" onclick="selectCloud('Si', 'page12')">
+	</div>
+
+	<!-- page12: 幫助陌生人 -->
+	<div class="page" id="page12">
+	  <h2>你走著走著肚子餓了，拿出剛才分到的食物準備大快朵頤，突然有一個衣衫襤褸的人説他餓很久了，希望你分一點食物給他，但畢竟分到的食物是一人份的，分了給他，你自己就未必夠吃了。你會：</h2>
+	  <input type="radio" name="help" value="Fe"> 雖然不知道他是什麽人，但看他這麽餓，讓他吃點吧<br>
+	  <input type="radio" name="help" value="Fi"> 自己夠吃的話可以分點給他，不然就拒絕他<br>
+	  <input type="radio" name="help" value="Ti"> 測試他究竟是真餓還是假餓<br>
+	  <input type="radio" name="help" value="Te"> 就算我給他吃完後他還是會餓，還是幫他在森林裏找吃的，才能長久解決問題吧<br>
+	  <button class="button" onclick="showResult()">看結果</button>
+	</div>
+
+    <!-- 結果頁 -->
+    <div class="page" id="resultPage">
+      <h2>你的 MBTI 功能分數：</h2>
+      <pre id="resultBox"></pre>
+    </div>
+  </div>
+  
+  <script>
+    let currentPage = 1;
+    let scores = { Ne:0, Ni:0, Se:0, Si:0, Te:0, Ti:0, Fe:0, Fi:0 };
+	let pageStack = [];
+	
+    function goToPage(n) {
+	  pageStack.push(currentPage);
+	  
+      document.querySelector('.page.active').classList.remove('active');
+      currentPage = n;
+      document.getElementById('page' + currentPage).classList.add('active');
+    }
+
+    function selectForest(num) {
+      document.getElementById('sliderBlock').style.display = 'block';
+      document.getElementById('forest1').classList.remove('selected');
+      document.getElementById('forest2').classList.remove('selected');
+      document.getElementById('forest' + num).classList.add('selected');
+    }
+
+    function showNextButton() {
+      document.getElementById('nextBtn1').style.display = 'inline-block';
+    }
+
+    function nextPage() {
+      const val = parseInt(document.getElementById('exploreSlider').value);
+      if (val >= 3) {
+        if (document.getElementById('forest1').classList.contains('selected')) {
+          scores.Ne += 1;
+        } else {
+          scores.Se += 1;
+        }
+        goToPage(3);
+      } else {
+        goToPage(2);
+      }
+    }
+
+	function goBack() {
+	  if (pageStack.length > 0) {
+		const previousPage = pageStack.pop();
+		goToPage(previousPage);
+	  }
+	}
+
+    function submitReason() {
+      const r = document.querySelector('input[name="reason"]:checked');
+      if (r) scores[r.value] += 1;
+      goToPage(3);
+    }
+
+    function checkCastleQuestion() {
+      if (document.getElementById('opt1').checked) {
+        goToPage(4);
+      } else {
+        goToPage(5);
+      }
+    }
+
+    function submitCastle() {
+      const c = document.querySelector('input[name="castle"]:checked');
+      if (c) scores[c.value] += 1;
+      goToPage(5);
+    }
+
+    function submitSingle(name) {
+      const s = document.querySelector('input[name="' + name + '"]:checked');
+      if (s) scores[s.value] += 1;
+      goToPage(currentPage + 1);
+    }
+
+    function checkfriendQuestion() {
+      if (document.getElementById('opt72').checked) {
+        goToPage(8);
+      } else {
+        goToPage(9);
+      }
+    }
+	
+    function checkfoodQuestion() {
+      if (document.getElementById('opt93').checked) {
+        goToPage(10);
+      } else {
+        goToPage(11);
+      }
+    }
+
+    function checkskyQuestion() {
+      if (document.getElementById('opt111').checked) {
+        goToPage('11a');
+      } else {
+        goToPage('11b');
+      }
+    }
+
+    function submitJoin() {
+      const j = document.querySelector('input[name="join"]:checked');
+      if (j && j.value === "Se") scores.Se += 1;
+      goToPage(8);
+    }
+	
+    function submitfriend() {
+      const k = document.querySelector('input[name="friend"]:checked');
+      if (k) scores[k.value] += 1;
+      goToPage(9);
+    }
+
+    function submitFood() {
+      const f = document.querySelector('input[name="food"]:checked');
+      if (f) scores[f.value] += 1;
+      goToPage(10);
+    }
+
+	function selectCloud(type, nextPage) {
+	  // 更新分數
+	  scores[type] += 1;
+	  // 跳轉到下一頁
+	  goToPage(nextPage);
+	}
+
+	function showResult() {
+	  const h = document.querySelector('input[name="help"]:checked');
+	  if (h) scores[h.value] += 1;
+
+	  // 儲存分數到 localStorage
+	  localStorage.setItem('mbtiScores_page3', JSON.stringify(scores));
+
+	  // 跳轉到 result.html
+	  window.location.href = 'result.html';
+	}
+  </script>
+</body>
+</html>
