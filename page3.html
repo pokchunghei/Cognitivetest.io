@@ -170,20 +170,22 @@
 	  <button class="button" onclick="checkskyQuestion()">下一頁</button>
 	</div>
 
-	<div class="page" id="page11a">
+	<div class="page" id="page12">
 	  <h2>你看到的雲朵是：</h2>
 	  <img src="cloud1.jpeg" id="cloud1a" class="image-option" onclick="selectCloud('Ne', 'page12')">
 	  <img src="cloud2.jpeg" id="cloud2a" class="image-option" onclick="selectCloud('Se', 'page12')">
+	  <button class="button" id="nextBtn1" style="display:none;" onclick="nextPagea()">下一頁</button>	
 	</div>
 
-	<div class="page" id="page11b">
+	<div class="page" id="page13">
 	  <h2>假如你看向天空，你看到的雲朵是：</h2>
 	  <img src="cloud1.jpeg" id="cloud1b" class="image-option" onclick="selectCloud('Ni', 'page12')">
 	  <img src="cloud2.jpeg" id="cloud2b" class="image-option" onclick="selectCloud('Si', 'page12')">
+	  <button class="button" id="nextBtn1" style="display:none;" onclick="nextPageb()">下一頁</button>
 	</div>
 
-	<!-- page12: 幫助陌生人 -->
-	<div class="page" id="page12">
+	<!-- page14: 幫助陌生人 -->
+	<div class="page" id="page14">
 	  <h2>你走著走著肚子餓了，拿出剛才分到的食物準備大快朵頤，突然有一個衣衫襤褸的人説他餓很久了，希望你分一點食物給他，但畢竟分到的食物是一人份的，分了給他，你自己就未必夠吃了。你會：</h2>
 	  <input type="radio" name="help" value="Fe"> 雖然不知道他是什麽人，但看他這麽餓，讓他吃點吧<br>
 	  <input type="radio" name="help" value="Fi"> 自己夠吃的話可以分點給他，不然就拒絕他<br>
@@ -191,13 +193,6 @@
 	  <input type="radio" name="help" value="Te"> 就算我給他吃完後他還是會餓，還是幫他在森林裏找吃的，才能長久解決問題吧<br>
 	  <button class="button" onclick="showResult()">看結果</button>
 	</div>
-
-    <!-- 結果頁 -->
-    <div class="page" id="resultPage">
-      <h2>你的 MBTI 功能分數：</h2>
-      <pre id="resultBox"></pre>
-    </div>
-  </div>
   
   <script>
     let currentPage = 1;
@@ -237,6 +232,24 @@
       }
     }
 
+    function nextPagea() {
+        if (document.getElementById('cloud1a').classList.contains('selected')) {
+          scores.Ne += 1;
+        } else {
+          scores.Se += 1;
+        }
+        goToPage(14);
+    }
+
+    function nextPageb() {
+        if (document.getElementById('cloud1b').classList.contains('selected')) {
+          scores.Ni += 1;
+        } else {
+          scores.Si += 1;
+        }
+        goToPage(14);
+    }
+	    
 	function goBack() {
 	  if (pageStack.length > 0) {
 		const previousPage = pageStack.pop();
@@ -288,9 +301,9 @@
 
     function checkskyQuestion() {
       if (document.getElementById('opt111').checked) {
-        goToPage('11a');
+        goToPage(12);
       } else {
-        goToPage('11b');
+        goToPage(13);
       }
     }
 
