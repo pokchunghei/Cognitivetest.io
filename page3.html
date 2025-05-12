@@ -59,6 +59,13 @@
   <div class="header">森林探險 MBTI 測驗</div>
   <div class="container">
 
+	<!-- page0: 準備頁面 -->
+	<div class="page active" id="page0">
+	  <h2>情景題：接下來，你將會進入到一個森林。<br>面對不同情景，你會如何抉擇呢？<br>（留意這是一個性格測試，千萬不要出於好奇而選某個選項，而是按你當下傾向想怎樣做去選。）</h2>
+
+	  <button class="button" id="nextBtn0" style="display:none;" onclick="gotoPage(1)">下一頁</button>
+	</div>
+	  
 	<!-- page1: 選森林 + 滑桿 -->
 	<div class="page active" id="page1">
 	  <h2>前方有一座森林，你覺得它比較像：</h2>
@@ -174,14 +181,14 @@
 	  <h2>你看到的雲朵是：</h2>
 	  <img src="cloud1.jpeg" id="cloud1a" class="image-option" onclick="selectCloud('Ne', 'page12')">
 	  <img src="cloud2.jpeg" id="cloud2a" class="image-option" onclick="selectCloud('Se', 'page12')">
-	  <button class="button" id="nextBtn1" style="display:none;" onclick="nextPagea()">下一頁</button>	
+	  <button class="button" id="nextBtn2" style="display:none;" onclick="nextPagea()">下一頁</button>	
 	</div>
 
 	<div class="page" id="page13">
 	  <h2>假如你看向天空，你看到的雲朵是：</h2>
 	  <img src="cloud1.jpeg" id="cloud1b" class="image-option" onclick="selectCloud('Ni', 'page12')">
 	  <img src="cloud2.jpeg" id="cloud2b" class="image-option" onclick="selectCloud('Si', 'page12')">
-	  <button class="button" id="nextBtn1" style="display:none;" onclick="nextPageb()">下一頁</button>
+	  <button class="button" id="nextBtn3" style="display:none;" onclick="nextPageb()">下一頁</button>
 	</div>
 
 	<!-- page14: 幫助陌生人 -->
