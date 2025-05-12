@@ -181,8 +181,8 @@ class="home-link">返回首頁</a>
 
 	<div class="page" id="page13">
 	  <h2>假如你看向天空，你看到的雲朵是：</h2>
-	  <img src="cloud1.jpeg" id="cloud1b" class="image-option" onclick="selectCloud('Ni')">
-	  <img src="cloud2.jpeg" id="cloud2b" class="image-option" onclick="selectCloud('Si')">
+	  <img src="cloud1.jpeg" id="cloud1b" class="image-option" onclick="selectCloudd('Ni')">
+	  <img src="cloud2.jpeg" id="cloud2b" class="image-option" onclick="selectCloudd('Si')">
 	  <button class="button" id="nextBtn3" style="display:none;" onclick="nextPageb()">下一頁</button>
 	</div>
 
@@ -330,6 +330,13 @@ class="home-link">返回首頁</a>
 	function selectCloud(type) {
 	  // 更新分數
 	  scores[type] += 1;
+	  document.getElementById('nextBtn2').style.display = 'inline-block';
+	}
+
+	function selectCloudd(type) {
+	  // 更新分數
+	  scores[type] += 1;
+	  document.getElementById('nextBtn3').style.display = 'inline-block';
 	}
 
 	function showResult() {
