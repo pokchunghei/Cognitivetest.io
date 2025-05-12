@@ -62,7 +62,7 @@ class="home-link">返回首頁</a>
   <div class="container">
 
 	<!-- page0: 準備頁面 -->
-	<div class="page active" id="page0">
+	<div class="page active" id="page">
 	  <h2>情景題：接下來，你將會進入到一個森林。<br>面對不同情景，你會如何抉擇呢？<br>（留意這是一個性格測試，千萬不要出於好奇而選某個選項，而是按你當下傾向想怎樣做去選。）</h2>
 
 	  <button class="button" id="nextBtn0" style="display:none;" onclick="gotoPage(1)">下一頁</button>
@@ -181,15 +181,15 @@ class="home-link">返回首頁</a>
 
 	<div class="page" id="page12">
 	  <h2>你看到的雲朵是：</h2>
-	  <img src="cloud1.jpeg" id="cloud1a" class="image-option" onclick="selectCloud('Ne', 'page12')">
-	  <img src="cloud2.jpeg" id="cloud2a" class="image-option" onclick="selectCloud('Se', 'page12')">
+	  <img src="cloud1.jpeg" id="cloud1a" class="image-option" onclick="selectCloud('Ne')">
+	  <img src="cloud2.jpeg" id="cloud2a" class="image-option" onclick="selectCloud('Se')">
 	  <button class="button" id="nextBtn2" style="display:none;" onclick="nextPagea()">下一頁</button>	
 	</div>
 
 	<div class="page" id="page13">
 	  <h2>假如你看向天空，你看到的雲朵是：</h2>
-	  <img src="cloud1.jpeg" id="cloud1b" class="image-option" onclick="selectCloud('Ni', 'page12')">
-	  <img src="cloud2.jpeg" id="cloud2b" class="image-option" onclick="selectCloud('Si', 'page12')">
+	  <img src="cloud1.jpeg" id="cloud1b" class="image-option" onclick="selectCloud('Ni')">
+	  <img src="cloud2.jpeg" id="cloud2b" class="image-option" onclick="selectCloud('Si')">
 	  <button class="button" id="nextBtn3" style="display:none;" onclick="nextPageb()">下一頁</button>
 	</div>
 
@@ -334,11 +334,9 @@ class="home-link">返回首頁</a>
       goToPage(10);
     }
 
-	function selectCloud(type, nextPage) {
+	function selectCloud(type) {
 	  // 更新分數
 	  scores[type] += 1;
-	  // 跳轉到下一頁
-	  goToPage(nextPage);
 	}
 
 	function showResult() {
