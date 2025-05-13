@@ -339,6 +339,17 @@ class="home-link">返回首頁</a>
 	  document.getElementById('nextBtn3').style.display = 'inline-block';
 	}
 
+    function updateScoreDisplay() {
+        document.getElementById('neScore').innerText = scores.Ne;
+        document.getElementById('niScore').innerText = scores.Ni;
+        document.getElementById('seScore').innerText = scores.Se;
+        document.getElementById('siScore').innerText = scores.Si;
+        document.getElementById('teScore').innerText = scores.Te;
+        document.getElementById('tiScore').innerText = scores.Ti;
+        document.getElementById('feScore').innerText = scores.Fe;
+        document.getElementById('fiScore').innerText = scores.Fi;
+    }
+
 	function showResult() {
 	  const h = document.querySelector('input[name="help"]:checked');
 	  if (h) scores[h.value] += 1;
