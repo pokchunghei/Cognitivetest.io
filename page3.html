@@ -343,6 +343,9 @@ class="home-link">返回首頁</a>
 	  const h = document.querySelector('input[name="help"]:checked');
 	  if (h) scores[h.value] += 1;
 
+   	  // 更新分數顯示
+   	  updateScoreDisplay();
+
 	  // 儲存分數到 localStorage
 	  localStorage.setItem('mbtiScores_page3', JSON.stringify(scores));
 
