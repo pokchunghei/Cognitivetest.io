@@ -135,17 +135,13 @@
       Ne: 0, Ni: 0, Se: 0, Si: 0, Te: 0, Ti: 0, Fe: 0, Fi: 0
     };
   
-    const page3Scores = JSON.parse(localStorage.getItem('mbtiScores_page3')) || {
-      Ne: 0, Ni: 0, Se: 0, Si: 0, Te: 0, Ti: 0, Fe: 0, Fi: 0
-    };
-  
     // 合併分數
     const combinedScores = {};
     for (const func of Object.keys(page2Scores)) {
-      combinedScores[func] = (page2Scores[func] || 0) + (page3Scores[func] || 0);
+      combinedScores[func] = (page2Scores[func] || 0);
     }
   
-    const maxScore = 30; // 每個功能的最高分數
+    const maxScore = 25; // 每個功能的最高分數
     const resultsDiv = document.getElementById('results');
   
     // 創建外框
