@@ -462,14 +462,6 @@ class="home-link">返回首頁</a>
             <button id="nextButton" class="button">Next</button>
         </div>
 
-        <!-- 意見反饋區域 -->
-        <div class="feedback-container">
-            <label for="feedback">意見反饋:</label>
-            <input type="text" id="feedback" placeholder="填寫您的意見">
-            <button id="submitFeedback">提交</button>
-        </div>
-    </div>
-
     <script>
         document.getElementById('nextButton').onclick = function() {
             const scores = {
@@ -528,39 +520,9 @@ class="home-link">返回首頁</a>
             // 將分數存儲到 localStorage
             localStorage.setItem('mbtiScores_page2', JSON.stringify(scores));
 
-            // 收集意見反饋
-            const feedbackInput = document.getElementById('feedback').value;
-            if (feedbackInput.toLowerCase() !== 'openrice') {
-                const feedbackRecords = JSON.parse(localStorage.getItem('feedbackRecords')) || [];
-                feedbackRecords.push({ feedback: feedbackInput });
-                localStorage.setItem('feedbackRecords', JSON.stringify(feedbackRecords));
-            }
-
-            // 清空意見反饋欄位並顯示謝謝信息
-            document.getElementById('feedback').value = '';
-
             // 跳轉到結果頁面
-            window.location.href = 'page3.html';
+            window.location.href = 'result.html';
         };
-
-        // 意見反饋提交功能
-        document.getElementById('submitFeedback').addEventListener('click', function() {
-            const feedback = document.getElementById('feedback').value;
-            if (feedback && feedback.toLowerCase() !== 'openrice') {
-                const feedbackRecords = JSON.parse(localStorage.getItem('feedbackRecords')) || [];
-                feedbackRecords.push({ feedback: feedback });
-                localStorage.setItem('feedbackRecords', JSON.stringify(feedbackRecords));
-            
-			    // 清空輸入框
-                document.getElementById('feedback').value = '';
-                alert('謝謝意見反饋'); // 彈出提示
-            } else if (feedback.toLowerCase() === 'openrice') {
-                // 如果輸入的是"openrice"，直接跳轉
-                window.location.href = 'results.html';
-            } else {
-                alert('請填寫有效的意見反饋。');
-            }
-        });
     </script>
 </body>
 </html>
