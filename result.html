@@ -113,7 +113,7 @@
 
     <div class="analysis" id="analysis">
       <h3>性格分析</h3>
-      <p></p>
+      <p id="analysisText"></p>
     </div>
 
     <!-- 這裡是用來顯示最終 MBTI 選擇和配對描述的區塊 -->
@@ -186,37 +186,32 @@
     // 依功能找出搭配的功能，組合出 MBTI
     function getMBTICandidate(funcName) {
       let orientation, letter2, letter3, letter4, pairedFunc;
-      // 分成4類：
       if (['Ne', 'Se'].includes(funcName)) {
         orientation = 'E';
-        letter2 = funcName[0].toUpperCase();  // N or S
-        pairedFunc = (scores.Ti >= scores.Fi) ? 'Ti' : 'Fi';
-        letter3 = pairedFunc[0].toUpperCase(); // T or F
-        letter4 = 'P';  // 外傾感知 → P
-      }
-      else if (['Te', 'Fe'].includes(funcName)) {
+        letter2 = funcName[0].toUpperCase();
+        pairedFunc = (combinedScores.Ti >= combinedScores.Fi) ? 'Ti' : 'Fi';
+        letter3 = pairedFunc[0].toUpperCase();
+        letter4 = 'P';
+      } else if (['Te', 'Fe'].includes(funcName)) {
         orientation = 'E';
-        letter3 = funcName[0].toUpperCase(); // T or F
-        pairedFunc = (scores.Ni >= scores.Si) ? 'Ni' : 'Si';
-        letter2 = pairedFunc[0].toUpperCase(); // N or S
-        letter4 = 'J';  // 外傾判斷 → J
-      }
-      else if (['Ni', 'Si'].includes(funcName)) {
+        letter3 = funcName[0].toUpperCase();
+        pairedFunc = (combinedScores.Ni >= combinedScores.Si) ? 'Ni' : 'Si';
+        letter2 = pairedFunc[0].toUpperCase();
+        letter4 = 'J';
+      } else if (['Ni', 'Si'].includes(funcName)) {
         orientation = 'I';
-        letter2 = funcName[0].toUpperCase(); // N or S
-        pairedFunc = (scores.Te >= scores.Fe) ? 'Te' : 'Fe';
-        letter3 = pairedFunc[0].toUpperCase(); // T or F
-        letter4 = 'J';  // 內傾感知 → 外傾判斷(Te/Fe) → J
-      }
-      else if (['Ti', 'Fi'].includes(funcName)) {
+        letter2 = funcName[0].toUpperCase();
+        pairedFunc = (combinedScores.Te >= combinedScores.Fe) ? 'Te' : 'Fe';
+        letter3 = pairedFunc[0].toUpperCase();
+        letter4 = 'J';
+      } else if (['Ti', 'Fi'].includes(funcName)) {
         orientation = 'I';
-        letter3 = funcName[0].toUpperCase(); // T or F
-        pairedFunc = (scores.Ne >= scores.Se) ? 'Ne' : 'Se';
-        letter2 = pairedFunc[0].toUpperCase(); // N or S
-        letter4 = 'P';  // 內傾判斷 → 外傾感知(Ne/Se) → P
+        letter3 = funcName[0].toUpperCase();
+        pairedFunc = (combinedScores.Ne >= combinedScores.Se) ? 'Ne' : 'Se';
+        letter2 = pairedFunc[0].toUpperCase();
+        letter4 = 'P';
       }
-      // 分數總和用於比較
-      const sumScores = scores[funcName] + scores[pairedFunc];
+      const sumScores = combinedScores[funcName] + combinedScores[pairedFunc];
       const mbti = orientation + letter2 + letter3 + letter4;
       return { mbti, sumScores };
     }
@@ -331,7 +326,17 @@
       "Fi-Ti": "這意味著你對自我感受十分在意，也會用理性拆解自身想法，既考慮喜好又講求邏輯，有時難免在內心堅持上較為固執。",
       "Fi-Fe": "這意味著你既想守護自己，也渴望照顧別人，有時需要在兩者之間拿捏分寸，但若能平衡好，就能成為既懂自己也懂他人的心靈支柱。"
     };
-
+  
+    // 獲取第一段和第二段描述
+    const topFuncParagraph = getPara(topFuncName, '1'); // 獲取第一段描述
+    const secondFuncParagraph = getPara(secondFuncName, '1'); // 獲取第二段描述
+    
+    // 組合性格分析段落
+    const analysisText = topFuncParagraph + " 而且，" + secondFuncParagraph;
+    
+    // 將生成的描述填充到性格分析區域
+    document.getElementById('analysisText').innerText = analysisText;
+    
     // --------------- 4) 新規則：根據分數差 & 高分功能 >=18 與否，拼出最終文字 ---------------
     const topScore = scores[topFuncName];
     const secondScore = scores[secondFuncName];
@@ -342,12 +347,14 @@
     // 準備 key
     const synergyKey = topFuncName + '-' + secondFuncName;  // e.g. "Ne-Ni"
     const synergyLine = synergyLines[synergyKey] || "";     // 沒有就給空字串
+    // 在這裡添加功能配對描述的填充
+    document.getElementById('synergyText').innerText = finalParagraph + synergyLine
 
     // 幫助選段的函式：傳入 "Ne" => 取 "Ne1" 或 "Ne2"
     function getPara(funcName, version) {
       return functionParagraphs[funcName + version] || "";
     }
-
+    
     // 條件 #1: (diff ≤ 3) && (topScore ≥ 18)
     if (diff <= 3 && topScore >= 18) {
       // "func11 + 同時， + func21 + synergyLine"
@@ -379,3 +386,4 @@
   </script>
 </body>
 </html>
+
