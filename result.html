@@ -113,7 +113,7 @@
 
     <div class="analysis" id="analysis">
       <h3>性格分析</h3>
-      <p id="analysisText"></p>
+      <p></p>
     </div>
 
     <!-- 這裡是用來顯示最終 MBTI 選擇和配對描述的區塊 -->
@@ -131,27 +131,13 @@
 
   <script>
     // --------------- 1) 讀取分數，顯示棒形圖、分數表、排序 ---------------
-    const page2Scores = JSON.parse(localStorage.getItem('mbtiScores_page2')) || {
+    const scores = JSON.parse(localStorage.getItem('mbtiScores')) || {
       Ne: 0, Ni: 0, Se: 0, Si: 0, Te: 0, Ti: 0, Fe: 0, Fi: 0
     };
-  
-    // 合併分數
-    const combinedScores = {};
-    for (const func of Object.keys(page2Scores)) {
-      combinedScores[func] = (page2Scores[func] || 0);
-    }
-  
     const maxScore = 25; // 每個功能的最高分數
+
     const resultsDiv = document.getElementById('results');
-  
-    // 創建外框
-    const outerDiv = document.createElement('div');
-    outerDiv.style.border = '2px solid #000'; // 外框樣式
-    outerDiv.style.padding = '10px';
-    outerDiv.style.borderRadius = '5px';
-    
-    // 顯示棒形圖
-    for (const [func, value] of Object.entries(combinedScores)) {
+    for (const [func, value] of Object.entries(scores)) {
       const bar = document.createElement('div');
       bar.className = 'bar';
       bar.innerHTML = `
@@ -160,23 +146,50 @@
           ${value}
         </div>
       `;
-      outerDiv.appendChild(bar);
-    }
-  
-    resultsDiv.appendChild(outerDiv); // 將外框添加到結果顯示區
-  
-    // 同步填充到分數表
-    for (const [func, value] of Object.entries(combinedScores)) {
+      resultsDiv.appendChild(bar);
+
+      // 同步填充到分數表
       const td = document.getElementById('score-' + func);
       if (td) td.innerText = value;
     }
-  
+
     function getColor(key) {
-      if (key in page2Scores) {
-        return '#337ab7'; // 藍色表示 page2 分數
+      const colors = {
+        Ne: '#FF5733',
+        Ni: '#33FF57',
+        Se: '#3357FF',
+        Si: '#FF33A1',
+        Te: '#FF9933',
+        Ti: '#33FFF6',
+        Fe: '#FF33D1',
+        Fi: '#FF33B5'
+      };
+      return colors[key] || '#aaa';
+    }
+
+    // 排序
+    const sortedFunctions = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+    const rankingText = sortedFunctions.map(entry => entry[0]).join(' > ');
+    document.getElementById('ranking').innerText = rankingText;
+
+    // 簡易分析（原本示範）
+    const analysisText = generateAnalysis(scores);
+    document.getElementById('analysis').querySelector('p').innerText = analysisText;
+
+    function generateAnalysis(scores) {
+      let ans = '';
+      if (scores.Ne > scores.Si) {
+        ans += '你是一個充滿創意和想像力的人，喜歡探索新的可能性。';
       } else {
-        return '#FF5733'; // 紅色表示 page3 分數
+        ans += '你傾向於依賴過去的經驗來做決策，並在熟悉的環境中感到舒適。';
       }
+      ans += ' ';
+      if (scores.Te > scores.Fe) {
+        ans += '你在工作中偏向於理性和邏輯，重視效率。';
+      } else {
+        ans += '你在社交中更注重他人的感受，努力促進和諧。';
+      }
+      return ans;
     }
 
     // --------------- 2) MBTI 產生邏輯：找最高、次高分功能 → 兩個候選 ---------------
@@ -186,32 +199,37 @@
     // 依功能找出搭配的功能，組合出 MBTI
     function getMBTICandidate(funcName) {
       let orientation, letter2, letter3, letter4, pairedFunc;
+      // 分成4類：
       if (['Ne', 'Se'].includes(funcName)) {
         orientation = 'E';
-        letter2 = funcName[0].toUpperCase();
-        pairedFunc = (combinedScores.Ti >= combinedScores.Fi) ? 'Ti' : 'Fi';
-        letter3 = pairedFunc[0].toUpperCase();
-        letter4 = 'P';
-      } else if (['Te', 'Fe'].includes(funcName)) {
-        orientation = 'E';
-        letter3 = funcName[0].toUpperCase();
-        pairedFunc = (combinedScores.Ni >= combinedScores.Si) ? 'Ni' : 'Si';
-        letter2 = pairedFunc[0].toUpperCase();
-        letter4 = 'J';
-      } else if (['Ni', 'Si'].includes(funcName)) {
-        orientation = 'I';
-        letter2 = funcName[0].toUpperCase();
-        pairedFunc = (combinedScores.Te >= combinedScores.Fe) ? 'Te' : 'Fe';
-        letter3 = pairedFunc[0].toUpperCase();
-        letter4 = 'J';
-      } else if (['Ti', 'Fi'].includes(funcName)) {
-        orientation = 'I';
-        letter3 = funcName[0].toUpperCase();
-        pairedFunc = (combinedScores.Ne >= combinedScores.Se) ? 'Ne' : 'Se';
-        letter2 = pairedFunc[0].toUpperCase();
-        letter4 = 'P';
+        letter2 = funcName[0].toUpperCase();  // N or S
+        pairedFunc = (scores.Ti >= scores.Fi) ? 'Ti' : 'Fi';
+        letter3 = pairedFunc[0].toUpperCase(); // T or F
+        letter4 = 'P';  // 外傾感知 → P
       }
-      const sumScores = combinedScores[funcName] + combinedScores[pairedFunc];
+      else if (['Te', 'Fe'].includes(funcName)) {
+        orientation = 'E';
+        letter3 = funcName[0].toUpperCase(); // T or F
+        pairedFunc = (scores.Ni >= scores.Si) ? 'Ni' : 'Si';
+        letter2 = pairedFunc[0].toUpperCase(); // N or S
+        letter4 = 'J';  // 外傾判斷 → J
+      }
+      else if (['Ni', 'Si'].includes(funcName)) {
+        orientation = 'I';
+        letter2 = funcName[0].toUpperCase(); // N or S
+        pairedFunc = (scores.Te >= scores.Fe) ? 'Te' : 'Fe';
+        letter3 = pairedFunc[0].toUpperCase(); // T or F
+        letter4 = 'J';  // 內傾感知 → 外傾判斷(Te/Fe) → J
+      }
+      else if (['Ti', 'Fi'].includes(funcName)) {
+        orientation = 'I';
+        letter3 = funcName[0].toUpperCase(); // T or F
+        pairedFunc = (scores.Ne >= scores.Se) ? 'Ne' : 'Se';
+        letter2 = pairedFunc[0].toUpperCase(); // N or S
+        letter4 = 'P';  // 內傾判斷 → 外傾感知(Ne/Se) → P
+      }
+      // 分數總和用於比較
+      const sumScores = scores[funcName] + scores[pairedFunc];
       const mbti = orientation + letter2 + letter3 + letter4;
       return { mbti, sumScores };
     }
@@ -326,17 +344,7 @@
       "Fi-Ti": "這意味著你對自我感受十分在意，也會用理性拆解自身想法，既考慮喜好又講求邏輯，有時難免在內心堅持上較為固執。",
       "Fi-Fe": "這意味著你既想守護自己，也渴望照顧別人，有時需要在兩者之間拿捏分寸，但若能平衡好，就能成為既懂自己也懂他人的心靈支柱。"
     };
-  
-    // 獲取第一段和第二段描述
-    const topFuncParagraph = getPara(topFuncName, '1'); // 獲取第一段描述
-    const secondFuncParagraph = getPara(secondFuncName, '1'); // 獲取第二段描述
-    
-    // 組合性格分析段落
-    const analysisText = topFuncParagraph + " 而且，" + secondFuncParagraph;
-    
-    // 將生成的描述填充到性格分析區域
-    document.getElementById('analysisText').innerText = analysisText;
-    
+
     // --------------- 4) 新規則：根據分數差 & 高分功能 >=18 與否，拼出最終文字 ---------------
     const topScore = scores[topFuncName];
     const secondScore = scores[secondFuncName];
@@ -347,14 +355,12 @@
     // 準備 key
     const synergyKey = topFuncName + '-' + secondFuncName;  // e.g. "Ne-Ni"
     const synergyLine = synergyLines[synergyKey] || "";     // 沒有就給空字串
-    // 在這裡添加功能配對描述的填充
-    document.getElementById('synergyText').innerText = finalParagraph + synergyLine
 
     // 幫助選段的函式：傳入 "Ne" => 取 "Ne1" 或 "Ne2"
     function getPara(funcName, version) {
       return functionParagraphs[funcName + version] || "";
     }
-    
+
     // 條件 #1: (diff ≤ 3) && (topScore ≥ 18)
     if (diff <= 3 && topScore >= 18) {
       // "func11 + 同時， + func21 + synergyLine"
@@ -386,4 +392,3 @@
   </script>
 </body>
 </html>
-
