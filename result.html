@@ -148,19 +148,13 @@
       if (td) td.innerText = value;
     }
 
-    function getColor(key) {
-      const colors = {
-        Ne: '#FF5733',
-        Ni: '#33FF57',
-        Se: '#3357FF',
-        Si: '#FF33A1',
-        Te: '#FF9933',
-        Ti: '#33FFF6',
-        Fe: '#FF33D1',
-        Fi: '#FF33B5'
-      };
-      return colors[key] || '#aaa';
-    }
+function getColor(key) {
+  if (key in scores) {
+    return '#337ab7'; // 藍色表示 page2 分數
+  } else {
+    return '#FF5733'; // 紅色表示 page3 分數
+  }
+}
 
     // 排序
     const sortedFunctions = Object.entries(scores).sort((a, b) => b[1] - a[1]);
@@ -367,4 +361,5 @@
   </script>
 </body>
 </html>
+
 
