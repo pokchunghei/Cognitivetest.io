@@ -111,11 +111,6 @@
     <h2>功能排序</h2>
     <p id="ranking"></p>
 
-    <div class="analysis" id="analysis">
-      <h3>性格分析</h3>
-      <p></p>
-    </div>
-
     <!-- 這裡是用來顯示最終 MBTI 選擇和配對描述的區塊 -->
     <div class="mbti-display">
       <h2><strong>MBTI</strong></h2>
@@ -124,7 +119,7 @@
     </div>
 
     <div class="analysis" id="pairDescription">
-      <h3>功能配對描述</h3>
+      <h3>性格分析</h3>
       <p id="synergyText"></p>
     </div>
   </div>
@@ -171,26 +166,6 @@
     const sortedFunctions = Object.entries(scores).sort((a, b) => b[1] - a[1]);
     const rankingText = sortedFunctions.map(entry => entry[0]).join(' > ');
     document.getElementById('ranking').innerText = rankingText;
-
-    // 簡易分析（原本示範）
-    const analysisText = generateAnalysis(scores);
-    document.getElementById('analysis').querySelector('p').innerText = analysisText;
-
-    function generateAnalysis(scores) {
-      let ans = '';
-      if (scores.Ne > scores.Si) {
-        ans += '你是一個充滿創意和想像力的人，喜歡探索新的可能性。';
-      } else {
-        ans += '你傾向於依賴過去的經驗來做決策，並在熟悉的環境中感到舒適。';
-      }
-      ans += ' ';
-      if (scores.Te > scores.Fe) {
-        ans += '你在工作中偏向於理性和邏輯，重視效率。';
-      } else {
-        ans += '你在社交中更注重他人的感受，努力促進和諧。';
-      }
-      return ans;
-    }
 
     // --------------- 2) MBTI 產生邏輯：找最高、次高分功能 → 兩個候選 ---------------
     const topFuncName = sortedFunctions[0][0];     // 第一高分功能
@@ -392,3 +367,4 @@
   </script>
 </body>
 </html>
+
