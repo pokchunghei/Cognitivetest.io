@@ -39,7 +39,7 @@
         <div class="tab" onclick="loadCurrentPage()">當前頁面</div>
     </div>
     <div class="content">
-        <iframe id="content-frame" src="index.html"></iframe>
+        <iframe id="content-frame" src="page2.html"></iframe>
     </div>
     <div class="tabs">
         <div class="tab" onclick="loadExplain()">解釋頁面</div>
@@ -47,7 +47,7 @@
 
     <script>
         function loadCurrentPage() {
-            const currentPage = localStorage.getItem('currentPage') || 'index.html';
+            const currentPage = localStorage.getItem('currentPage') || 'page2.html';
             document.getElementById('content-frame').src = currentPage;
         }
 
@@ -58,7 +58,7 @@
 
         // 當頁面加載時，檢查 localStorage
         window.onload = function() {
-            const currentPage = localStorage.getItem('currentPage') || 'index.html';
+            const currentPage = localStorage.getItem('currentPage') || 'page2.html';
             document.getElementById('content-frame').src = currentPage;
         };
 
@@ -71,3 +71,4 @@
     </script>
 </body>
 </html>
+
