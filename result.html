@@ -76,31 +76,31 @@
     <!-- 棒形圖容器 -->
     <div id="results"></div>
 
-<h2>分數表</h2>
-<table>
-  <tr>
-    <th>功能</th>
-    <th>Ne</th>
-    <th>Ni</th>
-    <th>Se</th>
-    <th>Si</th>
-    <th>Te</th>
-    <th>Ti</th>
-    <th>Fe</th>
-    <th>Fi</th>
-  </tr>
-  <tr>
-    <th>分數</th>
-    <td id="score-Ne"></td>
-    <td id="score-Ni"></td>
-    <td id="score-Se"></td>
-    <td id="score-Si"></td>
-    <td id="score-Te"></td>
-    <td id="score-Ti"></td>
-    <td id="score-Fe"></td>
-    <td id="score-Fi"></td>
-  </tr>
-</table>
+    <h2>分數表</h2>
+    <table>
+      <tr>
+        <th>功能</th>
+        <th>Ne</th>
+        <th>Ni</th>
+        <th>Se</th>
+        <th>Si</th>
+        <th>Te</th>
+        <th>Ti</th>
+        <th>Fe</th>
+        <th>Fi</th>
+      </tr>
+      <tr>
+        <th>分數</th>
+        <td id="score-Ne"></td>
+        <td id="score-Ni"></td>
+        <td id="score-Se"></td>
+        <td id="score-Si"></td>
+        <td id="score-Te"></td>
+        <td id="score-Ti"></td>
+        <td id="score-Fe"></td>
+        <td id="score-Fi"></td>
+      </tr>
+    </table>
 
     <div class="mbti-display">
       <h2><strong>MBTI</strong></h2>
@@ -113,7 +113,7 @@
       <p id="synergyText"></p>
     </div>
   </div>
-
+  
   <script>
     // --------------- 1) 讀取分數，顯示棒形圖、分數表、排序 ---------------
     const scores = JSON.parse(localStorage.getItem('mbtiScores')) || {
@@ -381,6 +381,7 @@
   </script>
 </body>
 </html>
+
 
 
 
