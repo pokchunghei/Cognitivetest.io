@@ -52,7 +52,6 @@
       background-color: #e7f3fe;
       border-left: 6px solid #2196F3;
     }
-    /* 顯示 MBTI 選擇、配對描述用的區域 */
     .mbti-display {
       margin-top: 20px;
       padding: 10px;
@@ -60,17 +59,16 @@
       border-left: 6px solid #ffc107;
     }
     .home-link {
-    	display: block;
-        margin-bottom: 20px;
-        font-size: 18px;
-        color: #2196F3;
-        text-decoration: none;
+      display: block;
+      margin-bottom: 20px;
+      font-size: 18px;
+      color: #2196F3;
+      text-decoration: none;
     }
   </style>
 </head>
 <body>
-	<a href="page2.html"
-class="home-link">重新測試</a>
+  <a href="page2.html" class="home-link">重新測試</a>
   <div class="container">
     <h1>MBTI 測試結果</h1>
 
@@ -81,38 +79,24 @@ class="home-link">重新測試</a>
     <table>
       <tr>
         <th>功能</th>
+        <th>Ne</th>
+        <th>Ni</th>
+        <th>Se</th>
+        <th>Si</th>
+        <th>Te</th>
+        <th>Ti</th>
+        <th>Fe</th>
+        <th>Fi</th>
+      </tr>
+      <tr>
         <th>分數</th>
-      </tr>
-      <tr>
-        <td>Ne</td>
         <td id="score-Ne"></td>
-      </tr>
-      <tr>
-        <td>Ni</td>
         <td id="score-Ni"></td>
-      </tr>
-      <tr>
-        <td>Se</td>
         <td id="score-Se"></td>
-      </tr>
-      <tr>
-        <td>Si</td>
         <td id="score-Si"></td>
-      </tr>
-      <tr>
-        <td>Te</td>
         <td id="score-Te"></td>
-      </tr>
-      <tr>
-        <td>Ti</td>
         <td id="score-Ti"></td>
-      </tr>
-      <tr>
-        <td>Fe</td>
         <td id="score-Fe"></td>
-      </tr>
-      <tr>
-        <td>Fi</td>
         <td id="score-Fi"></td>
       </tr>
     </table>
@@ -120,7 +104,6 @@ class="home-link">重新測試</a>
     <h2>功能排序</h2>
     <p id="ranking"></p>
 
-    <!-- 這裡是用來顯示最終 MBTI 選擇和配對描述的區塊 -->
     <div class="mbti-display">
       <h2><strong>MBTI</strong></h2>
       <p>第一選擇：<span id="finalFirstChoice"></span></p>
@@ -370,6 +353,7 @@ function getColor(key) {
   </script>
 </body>
 </html>
+
 
 
 
