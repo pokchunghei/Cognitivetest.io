@@ -128,8 +128,18 @@
     const sortedScores = Object.entries(scores).sort((a, b) => b[1] - a[1]);
 
     const resultsDiv = document.getElementById('results');
+    const scoreCells = {
+      Ne: document.getElementById('score-Ne'),
+      Ni: document.getElementById('score-Ni'),
+      Se: document.getElementById('score-Se'),
+      Si: document.getElementById('score-Si'),
+      Te: document.getElementById('score-Te'),
+      Ti: document.getElementById('score-Ti'),
+      Fe: document.getElementById('score-Fe'),
+      Fi: document.getElementById('score-Fi'),
+    };
 
-    // 生成棒形圖和填充分數表
+    // 生成棒形圖、填充分數表和排名
     sortedScores.forEach(([func, value]) => {
       // 顯示棒形圖
       const bar = document.createElement('div');
@@ -143,8 +153,9 @@
       resultsDiv.appendChild(bar);
 
       // 同步填充到分數表
-      const td = document.getElementById('score-' + func);
-      if (td) td.innerText = value;
+      if (scoreCells[func]) {
+        scoreCells[func].innerText = value;
+      }
     });
 
     // 渲染排名
@@ -356,6 +367,7 @@
   </script>
 </body>
 </html>
+
 
 
 
