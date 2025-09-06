@@ -76,18 +76,18 @@
     <!-- 棒形圖容器 -->
     <div id="results"></div>
 
-    <h2>分數表</h2>
+<h2>分數表</h2>
     <table>
       <tr>
         <th>功能</th>
-        <th>Ne</th>
-        <th>Ni</th>
-        <th>Se</th>
-        <th>Si</th>
-        <th>Te</th>
-        <th>Ti</th>
-        <th>Fe</th>
-        <th>Fi</th>
+        <th id="header-Ne">Ne</th>
+        <th id="header-Ni">Ni</th>
+        <th id="header-Se">Se</th>
+        <th id="header-Si">Si</th>
+        <th id="header-Te">Te</th>
+        <th id="header-Ti">Ti</th>
+        <th id="header-Fe">Fe</th>
+        <th id="header-Fi">Fi</th>
       </tr>
       <tr>
         <th>分數</th>
@@ -101,9 +101,6 @@
         <td id="score-Fi"></td>
       </tr>
     </table>
-
-    <h2>功能排序</h2>
-    <p id="ranking"></p>
 
     <div class="mbti-display">
       <h2><strong>MBTI</strong></h2>
@@ -139,7 +136,11 @@
       Fi: document.getElementById('score-Fi'),
     };
 
-    // 生成棒形圖、填充分數表和排名
+    // 渲染排名
+    // const ranking = sortedScores.map(([func, value]) => `${func}: ${value}`).join(', ');
+    // document.getElementById('ranking').innerText = ranking;
+
+    // 生成棒形圖和填充分數表
     sortedScores.forEach(([func, value]) => {
       // 顯示棒形圖
       const bar = document.createElement('div');
@@ -153,14 +154,9 @@
       resultsDiv.appendChild(bar);
 
       // 同步填充到分數表
-      if (scoreCells[func]) {
-        scoreCells[func].innerText = value;
-      }
+      const td = document.getElementById('score-' + func);
+      if (td) td.innerText = value;
     });
-
-    // 渲染排名
-    const ranking = sortedScores.map(([func, value]) => `${func}: ${value}`).join(', ');
-    document.getElementById('ranking').innerText = ranking;
 
     // 排序
     const sortedFunctions = Object.entries(scores).sort((a, b) => b[1] - a[1]);
@@ -367,6 +363,7 @@
   </script>
 </body>
 </html>
+
 
 
 
