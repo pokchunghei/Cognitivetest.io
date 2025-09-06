@@ -77,14 +77,10 @@
     <div id="results"></div>
 
 <h2>分數表</h2>
-    <table>
-      <tr>
-        <th>功能</th>
-        <th>分數</th>
-      </tr>
-      <tbody id="scoreTableBody"></tbody> <!-- 新增 tbody -->
-    </table>
-
+<table>
+  <tbody id="scoreTableBody"></tbody>
+</table>
+    
     <div class="mbti-display">
       <h2><strong>MBTI</strong></h2>
       <p>第一選擇：<span id="finalFirstChoice"></span></p>
@@ -121,6 +117,34 @@
 
     // 取得表格主體
     const tableBody = document.getElementById('scoreTableBody');
+
+    // 先建立兩個 row
+    const funcRow = document.createElement('tr');
+    const scoreRow = document.createElement('tr');
+    
+    // 加第一個欄位「功能」「分數」
+    const funcHeader = document.createElement('td');
+    funcHeader.innerText = "功能";
+    funcRow.appendChild(funcHeader);
+    
+    const scoreHeader = document.createElement('td');
+    scoreHeader.innerText = "分數";
+    scoreRow.appendChild(scoreHeader);
+    
+    // 依照排序好的 scores 動態生成
+    sortedScores.forEach(([func, value]) => {
+      const funcCell = document.createElement('td');
+      funcCell.innerText = func;
+      funcRow.appendChild(funcCell);
+    
+      const scoreCell = document.createElement('td');
+      scoreCell.innerText = value;
+      scoreRow.appendChild(scoreCell);
+    });
+    
+    // 把兩行加進 table
+    tableBody.appendChild(funcRow);
+    tableBody.appendChild(scoreRow);
     
     // 生成棒形圖和填充分數表
     sortedScores.forEach(([func, value]) => {
@@ -143,11 +167,6 @@
       `;
       tableBody.appendChild(tr);
     });
-
-    // 排序
-    const sortedFunctions = Object.entries(scores).sort((a, b) => b[1] - a[1]);
-    const rankingText = sortedFunctions.map(entry => entry[0]).join(' > ');
-    document.getElementById('ranking').innerText = rankingText;
 
     // --------------- 2) MBTI 產生邏輯：找最高、次高分功能 → 兩個候選 ---------------
     const topFuncName = sortedFunctions[0][0];     // 第一高分功能
@@ -349,6 +368,7 @@
   </script>
 </body>
 </html>
+
 
 
 
