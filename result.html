@@ -155,23 +155,22 @@
     });
     
     // 確保每個功能的分數都已填充後，執行排序
-    const scores = [
-      { func: 'Ne', score: document.getElementById('score-Ne').innerText },
-      { func: 'Ni', score: document.getElementById('score-Ni').innerText },
-      { func: 'Se', score: document.getElementById('score-Se').innerText },
-      { func: 'Si', score: document.getElementById('score-Si').innerText },
-      { func: 'Te', score: document.getElementById('score-Te').innerText },
-      { func: 'Ti', score: document.getElementById('score-Ti').innerText },
-      { func: 'Fe', score: document.getElementById('score-Fe').innerText },
-      { func: 'Fi', score: document.getElementById('score-Fi').innerText },
+    const orderedScores = [
+      { func: 'Ne', score: Number(scoreCells.Ne.innerText) },
+      { func: 'Ni', score: Number(scoreCells.Ni.innerText) },
+      { func: 'Se', score: Number(scoreCells.Se.innerText) },
+      { func: 'Si', score: Number(scoreCells.Si.innerText) },
+      { func: 'Te', score: Number(scoreCells.Te.innerText) },
+      { func: 'Ti', score: Number(scoreCells.Ti.innerText) },
+      { func: 'Fe', score: Number(scoreCells.Fe.innerText) },
+      { func: 'Fi', score: Number(scoreCells.Fi.innerText) },
     ];
-    
-    // 將分數轉為數字並排序
-    scores.forEach(item => item.score = Number(item.score));
-    scores.sort((a, b) => b.score - a.score); // 按分數降序排序
-    
-    // 清空分數表
-    scores.forEach((item, index) => {
+
+    // 按分數降序排序
+    orderedScores.sort((a, b) => b.score - a.score);
+
+    // 更新分數表
+    orderedScores.forEach(item => {
       const td = document.getElementById('score-' + item.func);
       if (td) td.innerText = item.score; // 更新排序後的分數
     });
@@ -381,6 +380,7 @@
   </script>
 </body>
 </html>
+
 
 
 
