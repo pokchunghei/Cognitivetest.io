@@ -77,30 +77,13 @@
     <div id="results"></div>
 
 <h2>分數表</h2>
-<table>
-  <tr>
-    <th>功能</th>
-    <th>Ne</th>
-    <th>Ni</th>
-    <th>Se</th>
-    <th>Si</th>
-    <th>Te</th>
-    <th>Ti</th>
-    <th>Fe</th>
-    <th>Fi</th>
-  </tr>
-  <tr>
-    <th>分數</th>
-    <td id="score-Ne"></td>
-    <td id="score-Ni"></td>
-    <td id="score-Se"></td>
-    <td id="score-Si"></td>
-    <td id="score-Te"></td>
-    <td id="score-Ti"></td>
-    <td id="score-Fe"></td>
-    <td id="score-Fi"></td>
-  </tr>
-</table>
+    <table>
+      <tr>
+        <th>功能</th>
+        <th>分數</th>
+      </tr>
+      <tbody id="scoreTableBody"></tbody> <!-- 新增 tbody -->
+    </table>
 
     <div class="mbti-display">
       <h2><strong>MBTI</strong></h2>
@@ -136,6 +119,9 @@
       Fi: document.getElementById('score-Fi'),
     };
 
+    // 取得表格主體
+    const tableBody = document.getElementById('scoreTableBody');
+    
     // 生成棒形圖和填充分數表
     sortedScores.forEach(([func, value]) => {
       // 顯示棒形圖
@@ -149,31 +135,13 @@
       `;
       resultsDiv.appendChild(bar);
     
-      // 填充分數表
-      const td = document.getElementById('score-' + func);
-      if (td) td.innerText = value; // 根據功能填充分數
-    });
-    
-    // 確保每個功能的分數都已填充後，執行排序
-    const scores = [
-      { func: 'Ne', score: document.getElementById('score-Ne').innerText },
-      { func: 'Ni', score: document.getElementById('score-Ni').innerText },
-      { func: 'Se', score: document.getElementById('score-Se').innerText },
-      { func: 'Si', score: document.getElementById('score-Si').innerText },
-      { func: 'Te', score: document.getElementById('score-Te').innerText },
-      { func: 'Ti', score: document.getElementById('score-Ti').innerText },
-      { func: 'Fe', score: document.getElementById('score-Fe').innerText },
-      { func: 'Fi', score: document.getElementById('score-Fi').innerText },
-    ];
-    
-    // 將分數轉為數字並排序
-    scores.forEach(item => item.score = Number(item.score));
-    scores.sort((a, b) => b.score - a.score); // 按分數降序排序
-    
-    // 清空分數表
-    scores.forEach((item, index) => {
-      const td = document.getElementById('score-' + item.func);
-      if (td) td.innerText = item.score; // 更新排序後的分數
+      // 動態填充分數表
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${func}</td>
+        <td>${value}</td>
+      `;
+      tableBody.appendChild(tr);
     });
 
     // 排序
@@ -381,7 +349,6 @@
   </script>
 </body>
 </html>
-
 
 
 
