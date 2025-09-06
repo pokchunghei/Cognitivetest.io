@@ -33,6 +33,7 @@
       height: 30px;
       border-radius: 5px;
       margin-left: 10px;
+      background-color: #2196F3; /* 使用單一顏色 */
     }
     table {
       width: 100%;
@@ -123,13 +124,19 @@
     };
     const maxScore = 25; // 每個功能的最高分數
 
+    // 將分數轉換為數組並排序
+    const sortedScores = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+
     const resultsDiv = document.getElementById('results');
-    for (const [func, value] of Object.entries(scores)) {
+
+    // 生成棒形圖和填充分數表
+    sortedScores.forEach(([func, value]) => {
+      // 顯示棒形圖
       const bar = document.createElement('div');
       bar.className = 'bar';
       bar.innerHTML = `
         <div class="bar-label">${func}</div>
-        <div class="bar-fill" style="width: ${value * 100 / maxScore}%; background-color: ${getColor(func)};">
+        <div class="bar-fill" style="width: ${value * 100 / maxScore}%;">
           ${value}
         </div>
       `;
@@ -138,15 +145,11 @@
       // 同步填充到分數表
       const td = document.getElementById('score-' + func);
       if (td) td.innerText = value;
-    }
+    });
 
-function getColor(key) {
-  if (key in scores) {
-    return '#337ab7'; // 藍色表示 page2 分數
-  } else {
-    return '#FF5733'; // 紅色表示 page3 分數
-  }
-}
+    // 渲染排名
+    const ranking = sortedScores.map(([func, value]) => `${func}: ${value}`).join(', ');
+    document.getElementById('ranking').innerText = ranking;
 
     // 排序
     const sortedFunctions = Object.entries(scores).sort((a, b) => b[1] - a[1]);
@@ -353,6 +356,7 @@ function getColor(key) {
   </script>
 </body>
 </html>
+
 
 
 
