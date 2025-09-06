@@ -80,26 +80,9 @@
     <table>
       <tr>
         <th>功能</th>
-        <th id="header-Ne">Ne</th>
-        <th id="header-Ni">Ni</th>
-        <th id="header-Se">Se</th>
-        <th id="header-Si">Si</th>
-        <th id="header-Te">Te</th>
-        <th id="header-Ti">Ti</th>
-        <th id="header-Fe">Fe</th>
-        <th id="header-Fi">Fi</th>
-      </tr>
-      <tr>
         <th>分數</th>
-        <td id="score-Ne"></td>
-        <td id="score-Ni"></td>
-        <td id="score-Se"></td>
-        <td id="score-Si"></td>
-        <td id="score-Te"></td>
-        <td id="score-Ti"></td>
-        <td id="score-Fe"></td>
-        <td id="score-Fi"></td>
       </tr>
+      <tbody id="scoreTableBody"></tbody> <!-- 新增 tbody -->
     </table>
 
     <div class="mbti-display">
@@ -136,10 +119,9 @@
       Fi: document.getElementById('score-Fi'),
     };
 
-    // 渲染排名
-    // const ranking = sortedScores.map(([func, value]) => `${func}: ${value}`).join(', ');
-    // document.getElementById('ranking').innerText = ranking;
-
+    // 取得表格主體
+    const tableBody = document.getElementById('scoreTableBody');
+    
     // 生成棒形圖和填充分數表
     sortedScores.forEach(([func, value]) => {
       // 顯示棒形圖
@@ -152,10 +134,14 @@
         </div>
       `;
       resultsDiv.appendChild(bar);
-
-      // 同步填充到分數表
-      const td = document.getElementById('score-' + func);
-      if (td) td.innerText = value;
+    
+      // 動態填充分數表
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${func}</td>
+        <td>${value}</td>
+      `;
+      tableBody.appendChild(tr);
     });
 
     // 排序
@@ -363,6 +349,7 @@
   </script>
 </body>
 </html>
+
 
 
 
