@@ -146,9 +146,8 @@
     tableBody.appendChild(funcRow);
     tableBody.appendChild(scoreRow);
     
-    // 生成棒形圖和填充分數表
+    // 生成棒形圖
     sortedScores.forEach(([func, value]) => {
-      // 顯示棒形圖
       const bar = document.createElement('div');
       bar.className = 'bar';
       bar.innerHTML = `
@@ -158,14 +157,6 @@
         </div>
       `;
       resultsDiv.appendChild(bar);
-    
-      // 動態填充分數表
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${func}</td>
-        <td>${value}</td>
-      `;
-      tableBody.appendChild(tr);
     });
 
     // --------------- 2) MBTI 產生邏輯：找最高、次高分功能 → 兩個候選 ---------------
@@ -368,6 +359,7 @@
   </script>
 </body>
 </html>
+
 
 
 
