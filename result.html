@@ -160,8 +160,8 @@
     });
 
     // --------------- 2) MBTI 產生邏輯：找最高、次高分功能 → 兩個候選 ---------------
-    const topFuncName = sortedFunctions[0][0];     // 第一高分功能
-    const secondFuncName = sortedFunctions[1][0];  // 第二高分功能
+    const topFuncName = sortedScores[0][0];     // 第一高分功能
+    const secondFuncName = sortedScores[1][0];  // 第二高分功能
 
     // 依功能找出搭配的功能，組合出 MBTI
     function getMBTICandidate(funcName) {
@@ -359,6 +359,7 @@
   </script>
 </body>
 </html>
+
 
 
 
