@@ -20,7 +20,10 @@
       cursor: pointer;
       text-align: center; /* 文字居中 */
       color: white; /* 白色字體讓漸層更清楚 */
-      transition: background 0.3s ease, font-size 0.3s ease;
+      background: linear-gradient(45deg, #6a5acd, #836fff); /* 顏色漸變 */
+      box-shadow: 0 2px 5px rgba(0,0,0,0.3); /* 陰影 */
+      border-radius: 5px 5px 0 0; /* 上面有圓角 */
+      margin: 0 2px; /* tab 之間留一點縫 */
     }
     .tab.active {
       background: rgba(255, 255, 255, 0.25); /* 透明高亮效果 */
@@ -66,6 +69,7 @@
   </script>
 </body>
 </html>
+
 
 
 
