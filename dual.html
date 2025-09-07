@@ -12,17 +12,20 @@
     .tabs {
       display: flex;
       width: 100%; /* 使選項卡填滿整個頁面寬度 */
-      background: #eee;
+      background: linear-gradient(135deg, #89f7fe, #66a6ff); /* 💙 漸層美色 */
     }
     .tab {
       flex: 1; /* 使每個選項卡均分寬度 */
-      padding: 10px 0; /* 垂直內邊距 */
+      padding: 12px 0; /* 垂直內邊距 */
       cursor: pointer;
       text-align: center; /* 文字居中 */
+      color: white; /* 白色字體讓漸層更清楚 */
+      transition: background 0.3s ease, font-size 0.3s ease;
     }
     .tab.active {
-      background: #ccc;
+      background: rgba(255, 255, 255, 0.25); /* 透明高亮效果 */
       font-weight: bold;
+      font-size: 1.05em;
     }
     .iframe-container {
       width: 100%;
@@ -37,29 +40,6 @@
     }
     iframe.active {
       display: block;
-    }
-
-    /* 基本字體大小 */
-    h1, h2, h3, p {
-      font-size: 16px; /* 桌面設備的字體大小 */
-    }
-
-    /* 手機設備的字體大小 */
-    @media (max-width: 600px) {
-      h1, h2, h3, p {
-        font-size: 12px; /* 手機設備的字體大小 */
-      }
-    }
-
-    /* 針對搖桿數字的調整 */
-    .slider-value {
-      font-size: 20px; /* 桌面設備的搖桿數字大小 */
-    }
-
-    @media (max-width: 600px) {
-      .slider-value {
-        font-size: 16px; /* 手機設備的搖桿數字大小 */
-      }
     }
   </style>
 </head>
@@ -86,5 +66,6 @@
   </script>
 </body>
 </html>
+
 
 
