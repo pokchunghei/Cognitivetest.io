@@ -20,25 +20,28 @@
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
         .title {
-            font-size: 24px;
+            font-size: 18px;              /* 字體縮小 */
             font-weight: bold;
             cursor: pointer;
             display: flex;
             align-items: center;
             margin: 10px 0;
+            padding: 10px 15px;           /* 內距讓框框好看 */
+            border-radius: 6px;           /* 圓角 */
+            background-color: #e3f2fd;    /* 淺藍色背景 */
+            color: #1565c0;               /* 深藍字，不跟正文一樣黑 */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* 陰影效果 */
         }
-        .content {
-            display: none;
-            padding: 10px 0;
-            border-top: 1px solid #ddd;
-            margin-top: 10px;
-        }
+        
         .arrow {
-            margin-left: 10px;
+            margin-left: auto;            /* 把箭頭推到最右邊 */
             transition: transform 0.3s;
+            font-size: 16px;              /* 符號比文字稍小 */
         }
+        
         .expanded .arrow {
-            transform: rotate(90deg);
+            transform: rotate(0deg);      /* 展開後變 ▼ */
+        }
         }
         .center-img {
           display: block;        /* 讓圖片變成獨立一行 */
@@ -53,7 +56,7 @@
     <div class="container">
         <div class="title expanded" onclick="toggleContent(this)">
             八維解析：Ne、Se、Ti…是什麽？
-            <span class="arrow">></span>
+            <span class="arrow">▼</span>
         </div>
         <div class="content" style="display:block;">
             <img src="ie.jpg" alt="内傾外傾" style="max-width:100%; border-radius:5px; margin-bottom:10px;">
@@ -107,12 +110,18 @@
     <script>
         function toggleContent(element) {
             const content = element.nextElementSibling;
-            content.style.display = content.style.display === 'block' ? 'none' : 'block';
-            element.classList.toggle('expanded');
+            const arrow = element.querySelector('.arrow');
+        
+            if (content.style.display === 'block') {
+                content.style.display = 'none';
+                element.classList.remove('expanded');
+                arrow.textContent = '▶';  // 收起
+            } else {
+                content.style.display = 'block';
+                element.classList.add('expanded');
+                arrow.textContent = '▼';  // 展開
+            }
         }
     </script>
 </body>
 </html>
-
-
-
