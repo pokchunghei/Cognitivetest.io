@@ -12,7 +12,7 @@
     .tabs {
       display: flex;
       width: 100%; /* 使選項卡填滿整個頁面寬度 */
-      background: linear-gradient(135deg, #89f7fe, #66a6ff); /* 💙 漸層美色 */
+      background: linear-gradient(45deg, #89f7fe, #66a6ff); /* 💙 漸層美色 */
     }
     .tab {
       flex: 1; /* 使每個選項卡均分寬度 */
@@ -32,14 +32,16 @@
     }
     .iframe-container {
       width: 100%;
-      height: 100%; /* 可以根據需要調整 */
-      border: 1px solid #999;
+      height: 100vh; /* 設置容器高度為 100% 的視口高度 */
+      border: 1px solid #999; /* 可選：容器的邊框 */
+      overflow: hidden; /* 隱藏溢出的內容 */
     }
+    
     iframe {
       width: 100%;
-      height: 100%;
-      border: none;
-      display: none;
+      height: 100%; /* 填滿容器的高度 */
+      border: none; /* 去掉邊框 */
+      display: block; /* 確保 iframe 顯示 */
     }
     iframe.active {
       display: block;
@@ -69,6 +71,7 @@
   </script>
 </body>
 </html>
+
 
 
 
