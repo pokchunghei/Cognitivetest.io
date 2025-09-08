@@ -36,12 +36,11 @@
       border: 1px solid #999; /* 可選：容器的邊框 */
       overflow: hidden; /* 隱藏溢出的內容 */
     }
-    
     iframe {
       width: 100%;
-      height: 95%; /* 填滿容器的高度 */
-      border: none; /* 去掉邊框 */
-      display: block; /* 確保 iframe 顯示 */
+      height: 100%; /* 填滿容器的高度 */
+      border: none;
+      display: none; /* 初始隱藏所有 iframe */
     }
     iframe.active {
       display: block;
@@ -71,6 +70,7 @@
   </script>
 </body>
 </html>
+
 
 
 
