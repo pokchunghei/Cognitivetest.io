@@ -32,16 +32,13 @@
             color: #1565c0;               /* 深藍字，不跟正文一樣黑 */
             box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* 陰影效果 */
         }
-        
         .arrow {
             margin-left: auto;            /* 把箭頭推到最右邊 */
             transition: transform 0.3s;
             font-size: 16px;              /* 符號比文字稍小 */
         }
-        
         .expanded .arrow {
             transform: rotate(0deg);      /* 展開後變 ▼ */
-        }
         }
         .center-img {
           display: block;        /* 讓圖片變成獨立一行 */
@@ -49,6 +46,10 @@
           max-width: 80%;        /* 圖片寬度最大 80%，可自行調整 */
           height: auto;          /* 自動保持比例 */
           border-radius: 5px;
+        }
+        .content p {
+          text-align: justify; /* 段落文字左右對齊 */
+          line-height: 1.6;
         }
     </style>
 </head>
@@ -58,9 +59,9 @@
             八維解析：Ne、Se、Ti…是什麽？
             <span class="arrow">▼</span>
         </div>
-        <div class="content" style="display:block; text-align:justify;">
-            <img src="ie.jpg" alt="内傾外傾" align="centre" style="max-width:46%; border-radius:5px; margin-bottom:10px;">
-            <img src="bawei.jpg" alt="八維示意圖" align="centre" style="max-width:100%; border-radius:5px; margin-bottom:10px;">
+        <div class="content" style="display:block;">
+            <img src="ie.jpg" alt="内傾外傾" class="center-img" style="max-width:46%;">
+            <img src="bawei.jpg" alt="八維示意圖" class="center-img">
             
             <p><strong>Ne 外傾直覺</strong>：探索外在世界的可能性，善於從周圍環境中提取靈感，並快速連結不同的想法，創造出新穎且富有想像力的點子。<br><br>特點：説話無厘頭、主題跳躍，想象力豐富，善於創新。</p><br>
             <p><strong>Ni 內傾直覺</strong>：深刻的洞察力，能夠透過反思和內省來理解和組織抽象概念，並預見未來的趨勢和潛在的可能性。<br><br>特點：對喜歡的事物有耐性研究，善於理解和組織混亂的言辭。</p><br>
@@ -128,6 +129,7 @@
     </script>
 </body>
 </html>
+
 
 
 
