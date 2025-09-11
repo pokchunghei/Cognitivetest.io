@@ -12,21 +12,23 @@
     .tabs {
       display: flex;
       width: 100%; /* 使選項卡填滿整個頁面寬度 */
-      background: linear-gradient(45deg, #89f7fe, #66a6ff); /* 💙 漸層美色 */
+      background: #cfe9ff; /* 頂部背景顏色，淺藍色 */
+      padding: 2px;
     }
     .tab {
       flex: 1; /* 使每個選項卡均分寬度 */
-      padding: 12px 0; /* 垂直內邊距 */
+      padding: 12px 0;
       cursor: pointer;
-      text-align: center; /* 文字居中 */
-      color: white; /* 白色字體讓漸層更清楚 */
-      background: linear-gradient(45deg, #6a5acd, #836fff); /* 顏色漸變 */
-      box-shadow: 0 2px 5px rgba(0,0,0,0.3); /* 陰影 */
-      border-radius: 5px 5px 0 0; /* 上面有圓角 */
-      margin: 0 2px; /* tab 之間留一點縫 */
+      text-align: center;
+      color: white;
+      background: #90caf9; /* 預設淺藍色 */
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      border-radius: 5px 5px 0 0;
+      margin: 0 2px;
+      transition: background 0.3s ease;
     }
     .tab.active {
-      background: rgba(255, 255, 255, 0.25); /* 透明高亮效果 */
+      background: #1976d2; /* 深藍色 */
       font-weight: bold;
       font-size: 1.05em;
     }
@@ -70,6 +72,7 @@
   </script>
 </body>
 </html>
+
 
 
 
