@@ -145,7 +145,7 @@
 
         <!-- 最底部的「了解更多」按鈕 -->
     <div class="btn-container">
-      <a href="explain.html" class="btn btn-secondary">了解更多：什麼是 MBTI？</a>
+	  <h4>上方了解更多：“MBTI是什麽？”</h4>
     </div>
   </div>
 
@@ -154,7 +154,7 @@
     const scores = JSON.parse(localStorage.getItem('mbtiScores')) || {
       Ne: 0, Ni: 0, Se: 0, Si: 0, Te: 0, Ti: 0, Fe: 0, Fi: 0
     };
-    const maxScore = 25; // 每個功能的最高分數
+    const maxScore = 28; // 每個功能的最高分數
 
     // 將分數轉換為數組並排序
     const sortedScores = Object.entries(scores).sort((a, b) => b[1] - a[1]);
@@ -415,6 +415,7 @@
   </script>
 </body>
 </html>
+
 
 
 
