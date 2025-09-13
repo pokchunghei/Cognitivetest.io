@@ -3,107 +3,249 @@
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="UTF-8">
-  <title>MBTI</title>
+  <title>MBTI 认知功能测试</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Roboto:wght@700&display=swap');
+    
     * {
       box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
+    
     body {
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      margin: 0;
       padding: 20px;
-      background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
-      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+      font-family: 'Noto Sans TC', 'Roboto', sans-serif;
+      color: #333;
+      line-height: 1.6;
     }
+    
     .container {
       text-align: center;
-      background: rgba(255, 255, 255, 0.8);
-      padding: 40px 20px;
-      border-radius: 15px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      background: rgba(255, 255, 255, 0.92);
+      padding: 40px 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
       max-width: 800px;
-      width: 100%;
-      margin: 20px;
+      width: 95%;
+      max-height: 90vh;
+      overflow-y: auto;
+      border: 2px solid #4a90e2;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
+    
     .title {
-      font-size: 1.8em;
-      margin-bottom: 15px;
-      color: #333;
+      font-size: 2.2em;
+      margin-bottom: 20px;
+      color: #2c3e50;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
     }
+    
     .description {
-      font-size: 0.9em;
-      color: #555;
+      font-size: 1.05em;
+      color: #34495e;
       margin-bottom: 30px;
-      line-height: 1.6;
-      text-align: left;
+      line-height: 1.8;
+      text-align: center;
+      flex-grow: 1;
     }
+    
     .description a {
-      color: #4a90e2;
+      color: #3498db;
       text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s ease;
     }
+    
     .description a:hover {
+      color: #2980b9;
       text-decoration: underline;
     }
+    
+    .description strong {
+      color: #2c3e50;
+      font-weight: 700;
+    }
+    
+    .button-container {
+      margin-top: 20px;
+    }
+    
     .next-button {
-      display: inline-block;
-      padding: 10px 25px;
-      background-color: #4a90e2;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 28px;
+      background: linear-gradient(to right, #4a90e2, #63b3ed);
       color: white;
       border: none;
-      border-radius: 50%;
-      font-size: 1.5em;
+      border-radius: 50px;
+      font-size: 1.2em;
+      font-weight: 600;
       cursor: pointer;
-      transition: background-color 0.3s;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(74, 144, 226, 0.4);
       text-decoration: none;
+      margin-top: 10px;
     }
+    
     .next-button:hover {
-      background-color: #357abD;
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(74, 144, 226, 0.6);
+      background: linear-gradient(to right, #63b3ed, #4a90e2);
     }
-
+    
+    .next-button:active {
+      transform: translateY(1px);
+    }
+    
+    .next-button i {
+      margin-left: 8px;
+      transition: transform 0.3s ease;
+    }
+    
+    .next-button:hover i {
+      transform: translateX(5px);
+    }
+    
+    .logo {
+      font-size: 2.5em;
+      margin-bottom: 20px;
+      color: #4a90e2;
+    }
+    
     /* 响应式设计 */
-    @media (min-width: 768px) {
+    @media (max-width: 768px) {
       .container {
-        padding: 60px 40px;
+        padding: 30px 20px;
+        max-height: 85vh;
       }
+      
       .title {
-        font-size: 2.2em;
+        font-size: 1.8em;
+        margin-bottom: 15px;
+      }
+      
+      .description {
+        font-size: 0.95em;
+        margin-bottom: 25px;
+      }
+      
+      .next-button {
+        padding: 12px 24px;
+        font-size: 1.1em;
       }
     }
     
-    @media (min-width: 992px) {
+    @media (max-width: 480px) {
       .container {
-        padding: 100px;
+        padding: 25px 15px;
+        max-height: 82vh;
       }
+      
+      .title {
+        font-size: 1.6em;
+      }
+      
+      .description {
+        font-size: 0.9em;
+      }
+      
+      .next-button {
+        padding: 10px 20px;
+        font-size: 1em;
+      }
+      
+      .logo {
+        font-size: 2em;
+      }
+    }
+    
+    /* 自定义滚动条 */
+    .container::-webkit-scrollbar {
+      width: 8px;
+    }
+    
+    .container::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 10px;
+    }
+    
+    .container::-webkit-scrollbar-thumb {
+      background: #c4d8f2;
+      border-radius: 10px;
+    }
+    
+    .container::-webkit-scrollbar-thumb:hover {
+      background: #4a90e2;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="title">Cognitive Function Test "MBTI"</div>
-    <div class="description">
-      如果你只想知道所謂"MBTI"的四個字母，<br>
-      INFJ、ESFP，向別人炫耀「我是I人/我是J人」，<br>
-      那麽你可以選擇去 <a href="https://www.16personalities.com/" target="_blank">16 Personalities</a> 網站，<br>
-      簡單易懂。<br><br>
-      但你真的認為那四個字母就能代表你？<br><br>
-      真正的 MBTI (Myers-Briggs Type Indicator) <br>
-      使用了榮格 (Carl Jung) 所提出的八維為基礎，<br>
-      包括兩類<strong>感知功能 Perceiving function N/S</strong>，<br>
-      和兩類<strong>判斷功能 Judging function T/F</strong>，<br>
-      每類功能分別有外傾 E 和內傾 I，<br>
-      組成<strong>八維</strong>（Ne, Ni, Se, Si; Te, Ti, Fe, Fi）。<br><br>
-      MBTI 並不完全是性格測試，也沒有什麽神奇的成分，<br>
-      只是透過分析使用者的認知功能，扣連至日常行為，<br>
-      幫助我們了解自己行為喜好背後的原因，<br>
-      也有助理解和自己性格相反的人之行為。<br>
-      <br><br>
-      如果你有興趣的話，就讓我們開始吧！
+    <div>
+      <div class="logo">
+        <i class="fas fa-brain"></i>
+      </div>
+      <div class="title">Cognitive Function Test "MBTI"</div>
+      <div class="description">
+        如果你只想知道所謂"MBTI"的四個字母，<br>
+        INFJ、ESFP，向別人炫耀「我是I人/我是J人」，<br>
+        那麽你可以選擇去 <a href="https://www.16personalities.com/" target="_blank">16 Personalities</a> 網站，<br>
+        簡單易懂。<br><br>
+        但你真的認為那四個字母就能代表你？<br><br>
+        真正的 MBTI (Myers-Briggs Type Indicator) <br>
+        使用了榮格 (Carl Jung) 所提出的八維為基礎，<br>
+        包括兩類<strong>感知功能 Perceiving function N/S</strong>，<br>
+        和兩類<strong>判斷功能 Judging function T/F</strong>，<br>
+        每類功能分別有外傾 E 和內傾 I，<br>
+        組成<strong>八維</strong>（Ne, Ni, Se, Si; Te, Ti, Fe, Fi）。<br><br>
+        MBTI 並不完全是性格測試，也沒有什麽神奇的成分，<br>
+        只是透過分析使用者的認知功能，扣連至日常行為，<br>
+        幫助我們了解自己行為喜好背後的原因，<br>
+        也有助理解和自己性格相反的人之行為。<br>
+        <br><br>
+        如果你有興趣的話，就讓我們開始吧！
+      </div>
     </div>
-    <a href="dual.html" class="next-button">&#8594;</a>
+    <div class="button-container">
+      <a href="dual.html" class="next-button">
+        開始測試 <i class="fas fa-arrow-right"></i>
+      </a>
+    </div>
   </div>
+
+  <script>
+    // 添加简单的交互效果
+    document.addEventListener('DOMContentLoaded', function() {
+      const container = document.querySelector('.container');
+      
+      // 添加加载动画
+      setTimeout(() => {
+        container.style.opacity = 1;
+        container.style.transform = 'translateY(0)';
+      }, 100);
+      
+      // 添加按钮点击效果
+      const button = document.querySelector('.next-button');
+      button.addEventListener('click', function(e) {
+        e.preventDefault();
+        this.style.transform = 'scale(0.95)';
+        
+        // 模拟页面跳转
+        setTimeout(() => {
+          window.location.href = this.getAttribute('href');
+        }, 300);
+      });
+    });
+  </script>
 </body>
 </html>
