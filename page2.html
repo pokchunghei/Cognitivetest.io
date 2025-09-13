@@ -3,90 +3,200 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MBTI 測試</title>
-	<style>
-	    body {
-	        font-family: Arial, sans-serif;
-	        margin: 0;
-	        padding: 20px;
-	        background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-	        min-height: 100vh;
-	    }
-	    .container {
-	        max-width: 800px;
-	        margin: 0 auto;
-	        padding: 20px;
-	        background-color: rgba(255, 255, 255, 0.95);
-	        border-radius: 15px;
-	        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-	    }
-	    .question {
-	        margin-bottom: 20px;
-	        padding: 15px;
-	        background: rgba(255, 255, 255, 0.8);
-	        border-radius: 10px;
-	    }
-	    .slider-container {
-	        width: 100%;
-	        margin: 10px 0;
-	    }
-	    .slider {
-	        -webkit-appearance: none;
-	        width: 100%;
-	        height: 8px;
-	        border-radius: 5px;
-	        background: #d3d3d3;
-	        outline: none;
-	    }
-	    .slider::-webkit-slider-thumb {
-	        -webkit-appearance: none;
-	        appearance: none;
-	        width: 20px;
-	        height: 20px;
-	        border-radius: 50%;
-	        background: #8A2BE2;
-	        cursor: pointer;
-	    }
-	    .slider::-moz-range-thumb {
-	        width: 20px;
-	        height: 20px;
-	        border-radius: 50%;
-	        background: #8A2BE2;
-	        cursor: pointer;
-	    }
-	    .slider-labels {
-	        display: flex;
-	        justify-content: space-between;
-	        font-size: 12px;
-	        margin-top: 5px;
-	    }
-	    .button {
-	        background: linear-gradient(to right, #8A2BE2, #9370DB);
-	        color: white;
-	        padding: 12px 25px;
-	        margin-top: 20px;
-	        text-align: center;
-	        cursor: pointer;
-	        font-size: 16px;
-	        border: none;
-	        border-radius: 50px;
-	        transition: all 0.3s ease;
-	        display: block;
-	        width: 100%;
-	        max-width: 200px;
-	        margin: 20px auto;
-	    }
-	    .button:hover {
-	        background: linear-gradient(to right, #9370DB, #8A2BE2);
-	        transform: translateY(-2px);
-	        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-	    }
-	    h1 {
-	        text-align: center;
-	        color: #4B0082;
-	        margin-bottom: 20px;
-	    }
-	</style>
+    <title>MBTI 藍色主題測試</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+            background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+            min-height: 100vh;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 25px;
+            background-color: rgba(255, 255, 255, 0.92);
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border: 2px solid #a1c4fd;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e6f2ff;
+        }
+        
+        h1 {
+            color: #3498db;
+            margin-bottom: 10px;
+            font-size: 2.2em;
+        }
+        
+        .instructions {
+            background-color: #e6f2ff;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .question {
+            margin-bottom: 25px;
+            padding: 18px;
+            background-color: #f8fbff;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+        }
+        
+        .question:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .question p {
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+        
+        .slider-container {
+            width: 100%;
+            margin: 15px 0;
+        }
+        
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 10px;
+            border-radius: 5px;
+            background: #d6e7ff;
+            outline: none;
+        }
+        
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #3498db;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .slider::-webkit-slider-thumb:hover {
+            background: #2980b9;
+            transform: scale(1.1);
+        }
+        
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #7f8c8d;
+            margin-top: 8px;
+        }
+        
+        .button-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+        
+        .submit-button {
+            background: linear-gradient(to right, #3498db, #2c77c4);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
+        }
+        
+        .submit-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.6);
+            background: linear-gradient(to right, #2c77c4, #3498db);
+        }
+        
+        .submit-button:active {
+            transform: translateY(1px);
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background-color: #e6f2ff;
+            border-radius: 4px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(to right, #3498db, #2c77c4);
+            border-radius: 4px;
+            width: 10%;
+            transition: width 0.5s ease;
+        }
+        
+        .question-number {
+            text-align: right;
+            color: #7f8c8d;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .question {
+                padding: 15px;
+            }
+            
+            .submit-button {
+                padding: 12px 30px;
+                font-size: 1em;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 1.6em;
+            }
+            
+            .instructions {
+                padding: 10px;
+            }
+            
+            .slider-labels span {
+                font-size: 11px;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -498,8 +608,67 @@
             <button id="nextButton" class="button">提交</button>
         </div>
 
-    <script>
-        document.getElementById('nextButton').onclick = function() {
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const progressBar = document.getElementById('progress');
+        const currentQuestion = document.getElementById('current');
+        const nextButton = document.getElementById('nextButton');
+        const questions = document.querySelectorAll('.question');
+        let currentIndex = 0;
+        
+        // 初始隐藏所有问题，只显示第一个
+        questions.forEach((question, index) => {
+            if (index !== 0) {
+                question.style.display = 'none';
+            }
+        });
+        
+        // 更新进度条
+        function updateProgress() {
+            const progress = ((currentIndex + 1) / questions.length) * 100;
+            progressBar.style.width = `${progress}%`;
+            currentQuestion.textContent = currentIndex + 1;
+        }
+        
+        // 添加滑块值显示功能
+        const sliders = document.querySelectorAll('.slider');
+        sliders.forEach(slider => {
+            const valueDisplay = document.createElement('div');
+            valueDisplay.className = 'slider-value';
+            valueDisplay.style.textAlign = 'center';
+            valueDisplay.style.marginTop = '5px';
+            valueDisplay.style.fontWeight = 'bold';
+            valueDisplay.style.color = '#3498db';
+            valueDisplay.textContent = `選擇的值: ${slider.value}`;
+            slider.parentNode.appendChild(valueDisplay);
+            
+            slider.addEventListener('input', function() {
+                valueDisplay.textContent = `選擇的值: ${this.value}`;
+            });
+        });
+        
+        // 下一题按钮点击事件
+        nextButton.addEventListener('click', function() {
+            if (currentIndex < questions.length - 1) {
+                questions[currentIndex].style.display = 'none';
+                currentIndex++;
+                questions[currentIndex].style.display = 'block';
+                updateProgress();
+                
+                if (currentIndex === questions.length - 1) {
+                    nextButton.textContent = '提交測試';
+                }
+            } else {
+                // 提交测试的逻辑 - 调用原有的评分功能
+                submitTest();
+            }
+        });
+        
+        // 初始化进度条
+        updateProgress();
+        
+        // 原有的评分功能
+        function submitTest() {
             const scores = {
                 Ne: 0,
                 Ni: 0,
@@ -516,38 +685,39 @@
             scores.Ne += parseInt(document.getElementById('slider-Ne1').value);
             scores.Si += parseInt(document.getElementById('slider-Si1').value);
             scores.Ni += parseInt(document.getElementById('slider-Ni1').value);
-            scores.Te += parseInt(document.getElementById('slider-Te1').value);
-            scores.Fe += parseInt(document.getElementById('slider-Fe1').value);
-            scores.Ti += parseInt(document.getElementById('slider-Ti1').value);
-            scores.Fi += 5 - parseInt(document.getElementById('slider-Fi1').value);
             scores.Se += parseInt(document.getElementById('slider-Se2').value);
             scores.Ne += parseInt(document.getElementById('slider-Ne2').value);
             scores.Si += parseInt(document.getElementById('slider-Si2').value);
             scores.Ni += parseInt(document.getElementById('slider-Ni2').value);
-            scores.Te += parseInt(document.getElementById('slider-Te2').value);
-            scores.Fe += parseInt(document.getElementById('slider-Fe2').value);
-            scores.Ti += parseInt(document.getElementById('slider-Ti2').value);
-            scores.Fi += parseInt(document.getElementById('slider-Fi2').value);
             scores.Se += parseInt(document.getElementById('slider-Se3').value);
             scores.Ne += parseInt(document.getElementById('slider-Ne3').value);
             scores.Si += parseInt(document.getElementById('slider-Si3').value);
             scores.Ni += parseInt(document.getElementById('slider-Ni3').value);
-            scores.Te += parseInt(document.getElementById('slider-Te3').value);
-            scores.Fe += parseInt(document.getElementById('slider-Fe3').value);
-            scores.Ti += parseInt(document.getElementById('slider-Ti3').value);
-            scores.Fi += parseInt(document.getElementById('slider-Fi3').value);
             scores.Se += parseInt(document.getElementById('slider-Se4').value);
             scores.Ne += parseInt(document.getElementById('slider-Ne4').value);
             scores.Si += parseInt(document.getElementById('slider-Si4').value);
             scores.Ni += parseInt(document.getElementById('slider-Ni4').value);
-            scores.Te += parseInt(document.getElementById('slider-Te4').value);
-            scores.Fe += parseInt(document.getElementById('slider-Fe4').value);
-            scores.Ti += parseInt(document.getElementById('slider-Ti4').value);
-            scores.Fi += parseInt(document.getElementById('slider-Fi4').value);
             scores.Se += parseInt(document.getElementById('slider-Se5').value);
             scores.Ne += parseInt(document.getElementById('slider-Ne5').value);
             scores.Si += parseInt(document.getElementById('slider-Si5').value);
             scores.Ni += parseInt(document.getElementById('slider-Ni5').value);
+            
+            scores.Te += parseInt(document.getElementById('slider-Te1').value);
+            scores.Ti += parseInt(document.getElementById('slider-Ti1').value);
+            scores.Fe += parseInt(document.getElementById('slider-Fe1').value);
+            scores.Fi += 5 - parseInt(document.getElementById('slider-Fi1').value);
+            scores.Te += parseInt(document.getElementById('slider-Te2').value);
+            scores.Fe += parseInt(document.getElementById('slider-Fe2').value);
+            scores.Ti += parseInt(document.getElementById('slider-Ti2').value);
+            scores.Fi += parseInt(document.getElementById('slider-Fi2').value);
+            scores.Te += parseInt(document.getElementById('slider-Te3').value);
+            scores.Fe += parseInt(document.getElementById('slider-Fe3').value);
+            scores.Ti += parseInt(document.getElementById('slider-Ti3').value);
+            scores.Fi += parseInt(document.getElementById('slider-Fi3').value);
+            scores.Te += parseInt(document.getElementById('slider-Te4').value);
+            scores.Fe += parseInt(document.getElementById('slider-Fe4').value);
+            scores.Ti += parseInt(document.getElementById('slider-Ti4').value);
+            scores.Fi += parseInt(document.getElementById('slider-Fi4').value);
             scores.Te += parseInt(document.getElementById('slider-Te5').value);
             scores.Fe += parseInt(document.getElementById('slider-Fe5').value);
             scores.Ti += parseInt(document.getElementById('slider-Ti5').value);
@@ -558,10 +728,10 @@
 
             // 跳轉到結果頁面
             window.location.href = 'result.html';
-        };
-    </script>
-</body>
-</html>
+        }
+    });
+</script>
+
 
 
 
