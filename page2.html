@@ -75,14 +75,16 @@
             margin: 15px 0;
         }
         
-        .slider {
-            -webkit-appearance: none;
-            width: 100%;
-            height: 10px;
-            border-radius: 5px;
-            background: #d6e7ff;
-            outline: none;
-        }
+		.slider {
+		    -webkit-appearance: none;
+		    width: 100%;
+		    height: 10px;
+		    border-radius: 5px;
+		    background: linear-gradient(to right, #3498db 0%, #d6e7ff 0%); /* 初始狀態 */
+		    outline: none;
+		    position: relative;
+		    z-index: 1;
+		}
         
         .slider::-webkit-slider-thumb {
             -webkit-appearance: none;
@@ -611,6 +613,29 @@
         </div>
 
     <script>
+			// 更新所有滑桿的背景
+			function updateSliderBackground() {
+			    const sliders = document.querySelectorAll('.slider');
+			    sliders.forEach(slider => {
+			        const value = (slider.value / slider.max) * 100;
+			        slider.style.background = `linear-gradient(to right, #3498db ${value}%, #d6e7ff ${value}%)`;
+			    });
+			}
+			
+			// 頁面加載時初始化
+			document.addEventListener('DOMContentLoaded', function() {
+			    updateSliderBackground();
+			    
+			    // 為所有滑桿添加事件監聽器
+			    const sliders = document.querySelectorAll('.slider');
+			    sliders.forEach(slider => {
+			        slider.addEventListener('input', function() {
+			            const value = (this.value / this.max) * 100;
+			            this.style.background = `linear-gradient(to right, #3498db ${value}%, #d6e7ff ${value}%)`;
+			        });
+			    });
+			});
+		
         document.getElementById('nextButton').onclick = function() {
             const scores = {
                 Ne: 0,
@@ -674,6 +699,7 @@
     </script>
 </body>
 </html>
+
 
 
 
