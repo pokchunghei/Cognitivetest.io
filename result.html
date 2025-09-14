@@ -19,10 +19,29 @@
       border-radius: 8px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
-    h1 {
-      text-align: center;
-      margin-bottom: 20px;
-      color: #2196F3;
+	h1 {
+	  text-align: center;
+	  font-size: 2.8rem;
+	  font-weight: 800;
+	  color: #3498db;
+	  margin-bottom: 15px;
+	  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+	  letter-spacing: 1px;
+	  position: relative;
+	  padding-bottom: 15px;
+	}
+	
+	h1::after {
+	  content: "";
+	  position: absolute;
+	  bottom: 0;
+	  left: 50%;
+	  transform: translateX(-50%);
+	  width: 100px;
+	  height: 4px;
+	  background: linear-gradient(to right, #3498db, #2c77c4);
+	  border-radius: 2px;
+	}
     }
     .bar {
       display: flex;
@@ -101,10 +120,10 @@
 	.bottom-text {
 	  margin-top: 40px;
 	  padding: 15px;
-	  background-color: #f5f7ff;
+	  background-color: #1a365d;
 	  text-align: center;
 	  font-size: 15px;
-	  color: #444;
+	  color: #FFD700;
 	  line-height: 1.7;
 	}
 	
@@ -143,7 +162,7 @@
     </div>
 
     <div class="bottom-text">
-      <p>測試結果與16型人格不同？<br>當然了，16 personalities不是MBTI呀！<br>MBTI由Ne、Si等功能組成，提供了内外傾維度<br>，比16型人格的單向N/S更準確。<br>（上方了解更多“MBTI是甚麽？）</p>
+      <p><i>測試結果與16型人格不同？</i><br>當然了，<strong>16 personalities不是MBTI呀！</strong><br>MBTI由Ne、Si等功能組成，提供了内外傾維度<br>，比16型人格的單向N/S更準確。<br>（上方了解更多“MBTI是甚麽？）</p>
     </div>
   </div>
 
@@ -413,6 +432,7 @@
   </script>
 </body>
 </html>
+
 
 
 
