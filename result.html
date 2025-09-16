@@ -270,6 +270,60 @@
     document.getElementById('finalFirstChoice').innerText = finalFirstChoice;
     document.getElementById('finalSecondChoice').innerText = finalSecondChoice;
 
+// --------------- 新增：功能描述字典 ---------------
+const functionDescriptions = {
+  Ne: ["想象和聯想力較豐富", "想象和聯想力十分豐富"],
+  Ni: ["做事較專注深入", "做事十分專注和深入"],
+  Se: ["偏向活在當下及時行樂", "鍾情活在當下及時行樂"],
+  Si: ["依賴記憶行事謹慎", "十分依賴記憶、行事非常謹慎"],
+  Te: ["管理和領導力較強", "管理和領導力很強"],
+  Ti: ["自我邏輯較強", "自我邏輯很強"],
+  Fe: ["共情能力較強", "共情能力很強"],
+  Fi: ["擁有明確自我價值觀和底綫", "堅守自我價值觀和底綫"]
+};
+
+	// --------------- 新增：生成功能描述点 ---------------
+	function generateFunctionPoints() {
+	  let pointsHTML = "<p><strong>根據你最高分的功能，你的功能特質是：</strong></p><ol>";
+	  let pointCount = 2; // 默认显示前两个功能
+	  
+	  // 检查是否需要添加第三个功能
+	  const secondThirdDiff = sortedScores[1][1] - sortedScores[2][1];
+	  const thirdFourthDiff = sortedScores[2][1] - sortedScores[3][1];
+	  
+	  if (secondThirdDiff < thirdFourthDiff) {
+	    pointCount = 3;
+	  }
+	  
+	  // 生成功能描述点
+	  for (let i = 0; i < pointCount; i++) {
+	    const funcName = sortedScores[i][0];
+	    const funcScore = sortedScores[i][1];
+	    const descriptionIndex = funcScore >= 20 ? 1 : 0;
+	    const description = functionDescriptions[funcName][descriptionIndex];
+	    
+	    pointsHTML += `<li><strong>${funcName}</strong>：${description}</li>`;
+	  }
+	  
+	  pointsHTML += "</ol>";
+	  
+	  // 检查是否为超级I人或E人
+	  const firstThreeFunctions = sortedScores.slice(0, 3).map(score => score[0]);
+	  const introvertedFunctions = ["Ni", "Si", "Ti", "Fi"];
+	  const extrovertedFunctions = ["Ne", "Se", "Te", "Fe"];
+	  
+	  const allIntroverted = firstThreeFunctions.every(func => introvertedFunctions.includes(func));
+	  const allExtroverted = firstThreeFunctions.every(func => extrovertedFunctions.includes(func));
+	  
+	  if (allIntroverted) {
+	    pointsHTML += "<p>你的首三功能都是内傾功能，你是一個超級I人！</p>";
+	  } else if (allExtroverted) {
+	    pointsHTML += "<p>你的首三功能都是外傾功能，你是一個超級E人！</p>";
+	  }
+	  
+	  return pointsHTML;
+	}
+	  
     // --------------- 3) 組合「段落」的字典們 ---------------
     // 這裡是 8 個功能的第一段與第二段描述
     const functionParagraphs = {
@@ -407,11 +461,16 @@
         + getPara(secondFuncName, '2');
     }
 
-    // 最後顯示在 #synergyText
-    document.getElementById('synergyText').innerText = finalParagraph;
+	const analysisDiv = document.getElementById('pairDescription');
+	analysisDiv.innerHTML = `
+	  <h3>性格分析</h3>
+	  ${generateFunctionPoints()}
+	  <p>${finalParagraph}</p>
+	`;
   </script>
 </body>
 </html>
+
 
 
 
