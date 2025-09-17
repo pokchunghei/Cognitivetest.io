@@ -270,17 +270,17 @@
     document.getElementById('finalFirstChoice').innerText = finalFirstChoice;
     document.getElementById('finalSecondChoice').innerText = finalSecondChoice;
 
-// --------------- 新增：功能描述字典 ---------------
-const functionDescriptions = {
-  Ne: ["想象和聯想力較豐富", "想象和聯想力十分豐富"],
-  Ni: ["做事較專注深入", "做事十分專注和深入"],
-  Se: ["偏向活在當下及時行樂", "鍾情活在當下及時行樂"],
-  Si: ["依賴記憶行事謹慎", "十分依賴記憶、行事非常謹慎"],
-  Te: ["管理和領導力較強", "管理和領導力很強"],
-  Ti: ["自我邏輯較強", "自我邏輯很強"],
-  Fe: ["共情能力較強", "共情能力很強"],
-  Fi: ["擁有明確自我價值觀和底綫", "堅守自我價值觀和底綫"]
-};
+	// --------------- 新增：功能描述字典 ---------------
+	const functionDescriptions = {
+	  Ne: ["想象和聯想力較豐富", "想象和聯想力十分豐富"],
+	  Ni: ["做事較專注深入", "做事十分專注和深入"],
+	  Se: ["偏向活在當下及時行樂", "鍾情活在當下及時行樂"],
+	  Si: ["依賴記憶行事謹慎", "十分依賴記憶、行事非常謹慎"],
+	  Te: ["管理和領導力較強", "管理和領導力很強"],
+	  Ti: ["自我邏輯較強", "自我邏輯很強"],
+	  Fe: ["共情能力較強", "共情能力很強"],
+	  Fi: ["擁有明確自我價值觀和底綫", "堅守自我價值觀和底綫"]
+	};
 
 	// --------------- 新增：生成功能描述点 ---------------
 	function generateFunctionPoints() {
@@ -419,86 +419,185 @@ const functionDescriptions = {
       "Fi-Fe": "這意味著你既想守護自己，也渴望照顧別人，有時需要在兩者之間拿捏分寸，但若能平衡好，就能成為既懂自己也懂他人的心靈支柱。"
     };
 
-    // --------------- 4) 新規則：根據分數差 & 高分功能 >=18 與否，拼出最終文字 ---------------
-    const topScore = scores[topFuncName];
-    const secondScore = scores[secondFuncName];
-    const diff = topScore - secondScore;  // 預設第一功能分數 >= 第二功能
-
-    let finalParagraph = "";
-
-    // 準備 key
-    const synergyKey = topFuncName + '-' + secondFuncName;  // e.g. "Ne-Ni"
-    const synergyLine = synergyLines[synergyKey] || "";     // 沒有就給空字串
-
-    // 幫助選段的函式：傳入 "Ne" => 取 "Ne1" 或 "Ne2"
-    function getPara(funcName, version) {
-      return functionParagraphs[funcName + version] || "";
-    }
-
-    // 條件 #1: (diff ≤ 3) && (topScore ≥ 20)
-    if (diff <= 3 && topScore >= 20) {
-      finalParagraph = 
-        " 你的主導功能和輔助功能都很強。"
-		+ <br><br>
-		+ topFuncName
-		+ " 主導功能："
-		+ getPara(topFuncName, '1')
-		+ <br><br>
-		+ secondFuncName
-		+ " 輔助功能："
-        + getPara(secondFuncName, '1');
-    }
-    // 條件 #2: (diff > 3) && (topScore ≥ 20)
-    else if (diff > 3 && topScore >= 20) {
-      finalParagraph =
-        " 你的主導功能很強，輔助功能較弱。"
-		+ <br><br>
-		+ topFuncName
-		+ " 主導功能："
-		+ getPara(topFuncName, '1')
-		+ <br><br>
-		+ secondFuncName
-		+ " 輔助功能："
-        + getPara(secondFuncName, '2');
-    }
-    // 條件 #3: (topScore < 20)
-    else {
-      // "func12 + 同時， + func22"
-      finalParagraph =
-        getPara(topFuncName, '2')
-        + " 同時，"
-        + getPara(secondFuncName, '2');
-    }
-
+	// --------------- 新增：功能倾向分类 ---------------
+	const functionOrientations = {
+	  Ne: "E", Ni: "I", Se: "E", Si: "I", 
+	  Te: "E", Ti: "I", Fe: "E", Fi: "I"
+	};
+	
+	const functionGroups = {
+	  Ne: "N", Ni: "N", Se: "S", Si: "S", 
+	  Te: "T", Ti: "T", Fe: "F", Fi: "F"
+	};
+	
+	// --------------- 新增：判断功能链类型 ---------------
+	function getFunctionChainType(func1, func2) {
+	  // 感知功能链 (N/S)
+	  if ((["Ne", "Ni", "Se", "Si"].includes(func1) && 
+	       ["Ne", "Ni", "Se", "Si"].includes(func2))) {
+	    return "感知功能鏈";
+	  }
+	  
+	  // 判断功能链 (T/F)
+	  if ((["Te", "Ti", "Fe", "Fi"].includes(func1) && 
+	       ["Te", "Ti", "Fe", "Fi"].includes(func2))) {
+	    return "判斷功能鏈";
+	  }
+	  
+	  // MBTI功能链 (根据旧代码逻辑)
+	  return "MBTI功能鏈";
+	}
+	
+	// --------------- 新增：生成主导功能和辅助功能 ---------------
+	function generateFunctionAnalysis() {
+	  const topFunc = sortedScores[0];
+	  const topFuncName = topFunc[0];
+	  const topFuncScore = topFunc[1];
+	  
+	  // 1. 确定主导功能
+	  const dominantFunctions = [topFunc];
+	  
+	  // 2. 找出同倾向功能
+	  const topOrientation = functionOrientations[topFuncName];
+	  const sameOrientationFuncs = sortedScores.filter(
+	    ([func, score]) => functionOrientations[func] === topOrientation && 
+	                      func !== topFuncName && 
+	                      score >= 15 && 
+	                      Math.abs(score - topFuncScore) <= 5
+	  );
+	  
+	  // 3. 添加第二主导功能
+	  if (sameOrientationFuncs.length > 0) {
+	    sameOrientationFuncs.sort((a, b) => b[1] - a[1]);
+	    dominantFunctions.push(sameOrientationFuncs[0]);
+	    
+	    // 4. 检查是否需要添加第三、第四主导功能
+	    for (let i = 1; i < sameOrientationFuncs.length; i++) {
+	      if (Math.abs(sameOrientationFuncs[i][1] - sameOrientationFuncs[0][1]) <= 1) {
+	        dominantFunctions.push(sameOrientationFuncs[i]);
+	      }
+	    }
+	  }
+	  
+	  // 5. 找出相反倾向功能 (辅助功能)
+	  const oppositeOrientationFuncs = sortedScores.filter(
+	    ([func, score]) => functionOrientations[func] !== topOrientation
+	  );
+	  
+	  // 6. 分组相反倾向功能
+	  const sameGroupOpposites = oppositeOrientationFuncs.filter(
+	    ([func, score]) => functionGroups[func] === functionGroups[topFuncName]
+	  );
+	  
+	  const differentGroupOpposites = oppositeOrientationFuncs.filter(
+	    ([func, score]) => functionGroups[func] !== functionGroups[topFuncName]
+	  );
+	  
+	  // 7. 选择辅助功能
+	  const auxiliaryFunctions = [];
+	  
+	  // 选择同组别较高分者
+	  if (sameGroupOpposites.length > 0) {
+	    sameGroupOpposites.sort((a, b) => b[1] - a[1]);
+	    auxiliaryFunctions.push(sameGroupOpposites[0]);
+	  }
+	  
+	  // 选择不同组别较高分者
+	  if (differentGroupOpposites.length > 0) {
+	    differentGroupOpposites.sort((a, b) => b[1] - a[1]);
+	    auxiliaryFunctions.push(differentGroupOpposites[0]);
+	  }
+	  
+	  // 8. 检查功能链匹配
+	  const functionChains = [];
+	  
+	  for (const auxFunc of auxiliaryFunctions) {
+	    const auxFuncName = auxFunc[0];
+	    let hasPerceptionChain = false;
+	    let hasJudgmentChain = false;
+	    let hasMBTIChain = false;
+	    
+	    for (const domFunc of dominantFunctions) {
+	      const domFuncName = domFunc[0];
+	      const chainType = getFunctionChainType(domFuncName, auxFuncName);
+	      
+	      if (chainType === "感知功能鏈") hasPerceptionChain = true;
+	      if (chainType === "判斷功能鏈") hasJudgmentChain = true;
+	      if (chainType === "MBTI功能鏈") hasMBTIChain = true;
+	    }
+	    
+	    // 如果辅助功能不能完成两种匹配，可能需要添加另一个辅助功能
+	    if ((hasPerceptionChain && hasJudgmentChain) || (hasPerceptionChain && hasMBTIChain) || (hasJudgmentChain && hasMBTIChain)) {
+	      // 辅助功能可以完成匹配
+	      for (const domFunc of dominantFunctions) {
+	        const domFuncName = domFunc[0];
+	        const chainType = getFunctionChainType(domFuncName, auxFuncName);
+	        functionChains.push(`${domFuncName}-${auxFuncName}(${chainType})`);
+	      }
+	    }
+	  }
+	  
+	  // 9. 生成最终文本
+	  let finalText = "";
+	  
+	  // 主导功能描述
+	  finalText += "<p><strong>主導功能</strong></p>";
+	  for (let i = 0; i < dominantFunctions.length; i++) {
+	    const [func, score] = dominantFunctions[i];
+	    const descriptionIndex = score >= 20 ? 1 : 0;
+	    const description = functionDescriptions[func][descriptionIndex];
+	    
+	    const order = i === 0 ? "主導" : 
+	                 i === 1 ? "第二主導" : 
+	                 i === 2 ? "第三主導" : "第四主導";
+	                 
+	    finalText += `<p><strong>${order}功能 ${func}</strong>：${description}</p>`;
+	  }
+	  
+	  // 辅助功能描述
+	  if (auxiliaryFunctions.length > 0) {
+	    finalText += "<p><strong>輔助功能</strong></p>";
+	    
+	    for (const [func, score] of auxiliaryFunctions) {
+	      const strength = score >= topFuncScore * 0.75 ? 
+	                      (Math.abs(score - topFuncScore) <= 3 ? "（較強）" : "") : 
+	                      "（較弱）";
+	      
+	      const descriptionIndex = score >= 20 ? 1 : 0;
+	      const description = functionDescriptions[func][descriptionIndex];
+	      
+	      // 找出相关的功能链
+	      const relevantChains = functionChains.filter(chain => chain.includes(func));
+	      
+	      let chainText = "";
+	      if (relevantChains.length > 0) {
+	        chainText = `與${relevantChains.map(chain => {
+	          const [domFunc] = chain.split('-');
+	          return `主導功能${domFunc}組成${chain.split('(')[1].replace(')', '')}`;
+	        }).join("，同時與")}`;
+	      }
+	      
+	      finalText += `<p>${strength}${func}${chainText ? ` ${chainText}` : ""}：${description}</p>`;
+	    }
+	  }
+	  
+	  return finalText;
+	}
+	
+	// --------------- 修改：更新final paragraph生成 ---------------
+	// 替换原有的finalParagraph生成逻辑
+	const finalParagraph = generateFunctionAnalysis();
+	
+	// --------------- 修改：更新性格分析部分 ---------------
 	const analysisDiv = document.getElementById('pairDescription');
 	analysisDiv.innerHTML = `
 	  <h3>性格分析</h3>
 	  ${generateFunctionPoints()}
-	  <p>${finalParagraph}</p>
+	  ${finalParagraph}
 	`;
   </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
