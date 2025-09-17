@@ -633,7 +633,63 @@
 			            this.style.background = `linear-gradient(to right, #3498db ${value}%, #d6e7ff ${value}%)`;
 			        });
 			    });
-			});
+				
+			// 手动输入按钮事件
+            document.getElementById('manualInputButton').addEventListener('click', function() {
+                document.getElementById('inputModal').style.display = 'flex';
+            });
+            
+            // 关闭模态窗口
+            document.querySelector('.close-button').addEventListener('click', function() {
+                document.getElementById('inputModal').style.display = 'none';
+            });
+            
+            // 点击模态窗口外部关闭
+            window.addEventListener('click', function(event) {
+                if (event.target === document.getElementById('inputModal')) {
+                    document.getElementById('inputModal').style.display = 'none';
+                }
+            });
+            
+            // 随机生成按钮事件
+            document.getElementById('randomButton').addEventListener('click', function() {
+                document.getElementById('input-Ne').value = Math.floor(Math.random() * 26);
+                document.getElementById('input-Ni').value = Math.floor(Math.random() * 26);
+                document.getElementById('input-Se').value = Math.floor(Math.random() * 26);
+                document.getElementById('input-Si').value = Math.floor(Math.random() * 26);
+                document.getElementById('input-Te').value = Math.floor(Math.random() * 26);
+                document.getElementById('input-Ti').value = Math.floor(Math.random() * 26);
+                document.getElementById('input-Fe').value = Math.floor(Math.random() * 26);
+                document.getElementById('input-Fi').value = Math.floor(Math.random() * 26);
+            });
+            
+            // 保存按钮事件
+            document.getElementById('saveButton').addEventListener('click', function() {
+                const scores = {
+                    Ne: parseInt(document.getElementById('input-Ne').value),
+                    Ni: parseInt(document.getElementById('input-Ni').value),
+                    Se: parseInt(document.getElementById('input-Se').value),
+                    Si: parseInt(document.getElementById('input-Si').value),
+                    Te: parseInt(document.getElementById('input-Te').value),
+                    Ti: parseInt(document.getElementById('input-Ti').value),
+                    Fe: parseInt(document.getElementById('input-Fe').value),
+                    Fi: parseInt(document.getElementById('input-Fi').value)
+                };
+                
+                // 验证输入
+                for (const key in scores) {
+                    if (isNaN(scores[key]) || scores[key] < 0 || scores[key] > 25) {
+                        alert('请输入0-40之间的有效数字');
+                        return;
+                    }
+                }
+                
+                // 将分数存储到 localStorage
+                localStorage.setItem('mbtiScores', JSON.stringify(scores));
+                alert('分数已保存！');
+                document.getElementById('inputModal').style.display = 'none';
+            });
+        });
 		
         document.getElementById('nextButton').onclick = function() {
             const scores = {
@@ -698,6 +754,7 @@
     </script>
 </body>
 </html>
+
 
 
 
