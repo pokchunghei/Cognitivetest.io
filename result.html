@@ -299,8 +299,8 @@
 	  for (let i = 0; i < pointCount; i++) {
 	    const funcName = sortedScores[i][0];
 	    const funcScore = sortedScores[i][1];
-	    const descriptionIndex = funcScore >= 20 ? 1 : 0;
-	    const description = functionDescriptions[funcName][descriptionIndex];
+	    const descriptionIndex = funcScore >= 20 ? 1 : 2;
+	    const description = functionParagraphs[funcName][descriptionIndex];
 	    
 	    pointsHTML += `<li><strong>${funcName}</strong>：${description}</li>`;
 	  }
@@ -541,11 +541,10 @@
 	  let finalText = "";
 	  
 	  // 主导功能描述
-	  finalText += "<p><strong>主導功能</strong></p>";
 	  for (let i = 0; i < dominantFunctions.length; i++) {
 	    const [func, score] = dominantFunctions[i];
-	    const descriptionIndex = score >= 20 ? 1 : 0;
-	    const description = functionDescriptions[func][descriptionIndex];
+	    const descriptionIndex = score >= 20 ? 1 : 2;
+	    const description = functionParagraphs[func][descriptionIndex];
 	    
 	    const order = i === 0 ? "主導" : 
 	                 i === 1 ? "第二主導" : 
@@ -556,15 +555,13 @@
 	  
 	  // 辅助功能描述
 	  if (auxiliaryFunctions.length > 0) {
-	    finalText += "<p><strong>輔助功能</strong></p>";
-	    
 	    for (const [func, score] of auxiliaryFunctions) {
 	      const strength = score >= topFuncScore * 0.75 ? 
 	                      (Math.abs(score - topFuncScore) <= 3 ? "（較強）" : "") : 
 	                      "（較弱）";
 	      
-	      const descriptionIndex = score >= 20 ? 1 : 0;
-	      const description = functionDescriptions[func][descriptionIndex];
+	      const descriptionIndex = score >= 20 ? 1 : 2;
+	      const description = functionParagraphs[func][descriptionIndex];
 	      
 	      // 找出相关的功能链
 	      const relevantChains = functionChains.filter(chain => chain.includes(func));
@@ -577,8 +574,8 @@
 	        }).join("，同時與")}`;
 	      }
 	      
-	      finalText += `<p>輔助功能${strength}${func}${chainText ? ` ${chainText}` : ""}：${description}</p>`;
-	    }
+	      finalText += `<p><strong>輔助功能</strong>${strength}<strong>${func}${chainText ? ` ${chainText}` : ""}：${description}</p>`;
+	    }</strong>
 	  }
 	  
 	  return finalText;
@@ -598,6 +595,7 @@
   </script>
 </body>
 </html>
+
 
 
 
