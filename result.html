@@ -282,8 +282,6 @@
       Fi: ["擁有明確自我價值觀和底綫", "堅守自我價值觀和底綫"]
     };
 
-    // --------------- 修改：functionParagraphs 结构 ---------------
-    // 这里修改为正确的结构，使用功能名称作为键，数组作为值
     const functionParagraphs = {
       Ne: [
         "你的想像力豐富，思維跳脫、天馬行空，認為世界有許多可能性，也許身邊有人會認為你是一名瘋子！",
@@ -337,7 +335,7 @@
         const funcName = sortedScores[i][0];
         const funcScore = sortedScores[i][1];
         const descriptionIndex = funcScore >= 20 ? 0 : 1; // 修改索引为0或1
-        const description = functionParagraphs[funcName][descriptionIndex];
+        const description = functionDescriptions[funcName][descriptionIndex];
         
         pointsHTML += `<li><strong>${funcName}</strong>：${description}</li>`;
       }
@@ -360,12 +358,6 @@
       
       return pointsHTML;
     }
-
-    // 這裡是「兩功能組合」的最後一段 (原先的 '這意味著...' 全部改成用 '-' 做 key)
-    const synergyLines = {
-      "Ne-Ni": "這意味著你不只腦中同時浮現各種新奇點子，還能以深層洞察將它們串聯在更宏大的脈絡中，面對未來或抽象事物時，你往往能一邊天馬行空、一邊洞悉深意，讓旁人既驚嘆又覺得捉摸不定。",
-      // ... 其他synergyLines保持不变
-    };
 
     // --------------- 新增：功能倾向分类 ---------------
     const functionOrientations = {
@@ -545,11 +537,8 @@
       return finalText;
     }
 
-    // --------------- 修改：更新final paragraph生成 ---------------
-    // 替换原有的finalParagraph生成逻辑
     const finalParagraph = generateFunctionAnalysis();
-    
-    // --------------- 修改：更新性格分析部分 ---------------
+
     const analysisDiv = document.getElementById('pairDescription');
     if (analysisDiv) {
       analysisDiv.innerHTML = `
@@ -561,6 +550,7 @@
   </script>
 </body>
 </html>
+
 
 
 
