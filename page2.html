@@ -609,166 +609,116 @@
 
 		<div class="next-button">
 		  <button id="nextButton" class="submit-button">提交</button>
+		  <button id="randomButton" class="submit-button" style="background: linear-gradient(to right, #9b59b6, #8e44ad); margin-left: 10px;">随机生成结果</button>
 		</div>
 
-    <script>
-			// 更新所有滑桿的背景
-			function updateSliderBackground() {
-			    const sliders = document.querySelectorAll('.slider');
-			    sliders.forEach(slider => {
-			        const value = (slider.value / slider.max) * 100;
-			        slider.style.background = `linear-gradient(to right, #3498db ${value}%, #d6e7ff ${value}%)`;
-			    });
-			}
-			
-			// 頁面加載時初始化
-			document.addEventListener('DOMContentLoaded', function() {
-			    updateSliderBackground();
-			    
-			    // 為所有滑桿添加事件監聽器
-			    const sliders = document.querySelectorAll('.slider');
-			    sliders.forEach(slider => {
-			        slider.addEventListener('input', function() {
-			            const value = (this.value / this.max) * 100;
-			            this.style.background = `linear-gradient(to right, #3498db ${value}%, #d6e7ff ${value}%)`;
-			        });
-			    });
-				
-			// 手动输入按钮事件
-            document.getElementById('manualInputButton').addEventListener('click', function() {
-                document.getElementById('inputModal').style.display = 'flex';
-            });
-            
-            // 关闭模态窗口
-            document.querySelector('.close-button').addEventListener('click', function() {
-                document.getElementById('inputModal').style.display = 'none';
-            });
-            
-            // 点击模态窗口外部关闭
-            window.addEventListener('click', function(event) {
-                if (event.target === document.getElementById('inputModal')) {
-                    document.getElementById('inputModal').style.display = 'none';
-                }
-            });
-            
-            // 随机生成按钮事件
-            document.getElementById('randomButton').addEventListener('click', function() {
-                document.getElementById('input-Ne').value = Math.floor(Math.random() * 26);
-                document.getElementById('input-Ni').value = Math.floor(Math.random() * 26);
-                document.getElementById('input-Se').value = Math.floor(Math.random() * 26);
-                document.getElementById('input-Si').value = Math.floor(Math.random() * 26);
-                document.getElementById('input-Te').value = Math.floor(Math.random() * 26);
-                document.getElementById('input-Ti').value = Math.floor(Math.random() * 26);
-                document.getElementById('input-Fe').value = Math.floor(Math.random() * 26);
-                document.getElementById('input-Fi').value = Math.floor(Math.random() * 26);
-            });
-            
-            // 保存按钮事件
-            document.getElementById('saveButton').addEventListener('click', function() {
-                const scores = {
-                    Ne: parseInt(document.getElementById('input-Ne').value),
-                    Ni: parseInt(document.getElementById('input-Ni').value),
-                    Se: parseInt(document.getElementById('input-Se').value),
-                    Si: parseInt(document.getElementById('input-Si').value),
-                    Te: parseInt(document.getElementById('input-Te').value),
-                    Ti: parseInt(document.getElementById('input-Ti').value),
-                    Fe: parseInt(document.getElementById('input-Fe').value),
-                    Fi: parseInt(document.getElementById('input-Fi').value)
-                };
-                
-                // 验证输入
-                for (const key in scores) {
-                    if (isNaN(scores[key]) || scores[key] < 0 || scores[key] > 25) {
-                        alert('请输入0-40之间的有效数字');
-                        return;
-                    }
-                }
-                
-                // 将分数存储到 localStorage
-                localStorage.setItem('mbtiScores', JSON.stringify(scores));
-                alert('分数已保存！');
-                document.getElementById('inputModal').style.display = 'none';
-            });
-        });
-		
-        document.getElementById('nextButton').onclick = function() {
-            const scores = {
-                Ne: 0,
-                Ni: 0,
-                Se: 0,
-                Si: 0,
-                Te: 0,
-                Ti: 0,
-                Fe: 0,
-                Fi: 0
-            };
-
-            // 收集各個問題的分數
-            scores.Se += parseInt(document.getElementById('slider-Se1').value);
-            scores.Ne += parseInt(document.getElementById('slider-Ne1').value);
-            scores.Si += parseInt(document.getElementById('slider-Si1').value);
-            scores.Ni += parseInt(document.getElementById('slider-Ni1').value);
-            scores.Te += parseInt(document.getElementById('slider-Te1').value);
-            scores.Fe += parseInt(document.getElementById('slider-Fe1').value);
-            scores.Ti += parseInt(document.getElementById('slider-Ti1').value);
-            scores.Fi += 5 - parseInt(document.getElementById('slider-Fi1').value);
-            scores.Se += parseInt(document.getElementById('slider-Se2').value);
-            scores.Ne += parseInt(document.getElementById('slider-Ne2').value);
-            scores.Si += parseInt(document.getElementById('slider-Si2').value);
-            scores.Ni += parseInt(document.getElementById('slider-Ni2').value);
-            scores.Te += parseInt(document.getElementById('slider-Te2').value);
-            scores.Fe += parseInt(document.getElementById('slider-Fe2').value);
-            scores.Ti += parseInt(document.getElementById('slider-Ti2').value);
-            scores.Fi += parseInt(document.getElementById('slider-Fi2').value);
-            scores.Se += parseInt(document.getElementById('slider-Se3').value);
-            scores.Ne += parseInt(document.getElementById('slider-Ne3').value);
-            scores.Si += parseInt(document.getElementById('slider-Si3').value);
-            scores.Ni += parseInt(document.getElementById('slider-Ni3').value);
-            scores.Te += parseInt(document.getElementById('slider-Te3').value);
-            scores.Fe += parseInt(document.getElementById('slider-Fe3').value);
-            scores.Ti += parseInt(document.getElementById('slider-Ti3').value);
-            scores.Fi += parseInt(document.getElementById('slider-Fi3').value);
-            scores.Se += parseInt(document.getElementById('slider-Se4').value);
-            scores.Ne += parseInt(document.getElementById('slider-Ne4').value);
-            scores.Si += parseInt(document.getElementById('slider-Si4').value);
-            scores.Ni += parseInt(document.getElementById('slider-Ni4').value);
-            scores.Te += parseInt(document.getElementById('slider-Te4').value);
-            scores.Fe += parseInt(document.getElementById('slider-Fe4').value);
-            scores.Ti += parseInt(document.getElementById('slider-Ti4').value);
-            scores.Fi += parseInt(document.getElementById('slider-Fi4').value);
-            scores.Se += parseInt(document.getElementById('slider-Se5').value);
-            scores.Ne += parseInt(document.getElementById('slider-Ne5').value);
-            scores.Si += parseInt(document.getElementById('slider-Si5').value);
-            scores.Ni += parseInt(document.getElementById('slider-Ni5').value);
-            scores.Te += parseInt(document.getElementById('slider-Te5').value);
-            scores.Fe += parseInt(document.getElementById('slider-Fe5').value);
-            scores.Ti += parseInt(document.getElementById('slider-Ti5').value);
-            scores.Fi += parseInt(document.getElementById('slider-Fi5').value);
-
-            // 將分數存儲到 localStorage
-            localStorage.setItem('mbtiScores', JSON.stringify(scores));
-
-            // 跳轉到結果頁面
-            window.location.href = 'result.html';
-        };
-    </script>
+	<script>
+	    // 更新所有滑桿的背景
+	    function updateSliderBackground() {
+	        const sliders = document.querySelectorAll('.slider');
+	        sliders.forEach(slider => {
+	            const value = (slider.value / slider.max) * 100;
+	            slider.style.background = `linear-gradient(to right, #3498db ${value}%, #d6e7ff ${value}%)`;
+	        });
+	    }
+	    
+	    // 頁面加載時初始化
+	    document.addEventListener('DOMContentLoaded', function() {
+	        updateSliderBackground();
+	        
+	        // 為所有滑桿添加事件監聽器
+	        const sliders = document.querySelectorAll('.slider');
+	        sliders.forEach(slider => {
+	            slider.addEventListener('input', function() {
+	                const value = (this.value / this.max) * 100;
+	                this.style.background = `linear-gradient(to right, #3498db ${value}%, #d6e7ff ${value}%)`;
+	            });
+	        });
+	        
+	        // 提交按钮功能
+	        document.getElementById('nextButton').onclick = function() {
+	            const scores = {
+	                Ne: 0,
+	                Ni: 0,
+	                Se: 0,
+	                Si: 0,
+	                Te: 0,
+	                Ti: 0,
+	                Fe: 0,
+	                Fi: 0
+	            };
+	
+	            // 收集各個問題的分數
+	            scores.Se += parseInt(document.getElementById('slider-Se1').value);
+	            scores.Ne += parseInt(document.getElementById('slider-Ne1').value);
+	            scores.Si += parseInt(document.getElementById('slider-Si1').value);
+	            scores.Ni += parseInt(document.getElementById('slider-Ni1').value);
+	            scores.Te += parseInt(document.getElementById('slider-Te1').value);
+	            scores.Fe += parseInt(document.getElementById('slider-Fe1').value);
+	            scores.Ti += parseInt(document.getElementById('slider-Ti1').value);
+	            scores.Fi += 5 - parseInt(document.getElementById('slider-Fi1').value);
+	            scores.Se += parseInt(document.getElementById('slider-Se2').value);
+	            scores.Ne += parseInt(document.getElementById('slider-Ne2').value);
+	            scores.Si += parseInt(document.getElementById('slider-Si2').value);
+	            scores.Ni += parseInt(document.getElementById('slider-Ni2').value);
+	            scores.Te += parseInt(document.getElementById('slider-Te2').value);
+	            scores.Fe += parseInt(document.getElementById('slider-Fe2').value);
+	            scores.Ti += parseInt(document.getElementById('slider-Ti2').value);
+	            scores.Fi += parseInt(document.getElementById('slider-Fi2').value);
+	            scores.Se += parseInt(document.getElementById('slider-Se3').value);
+	            scores.Ne += parseInt(document.getElementById('slider-Ne3').value);
+	            scores.Si += parseInt(document.getElementById('slider-Si3').value);
+	            scores.Ni += parseInt(document.getElementById('slider-Ni3').value);
+	            scores.Te += parseInt(document.getElementById('slider-Te3').value);
+	            scores.Fe += parseInt(document.getElementById('slider-Fe3').value);
+	            scores.Ti += parseInt(document.getElementById('slider-Ti3').value);
+	            scores.Fi += parseInt(document.getElementById('slider-Fi3').value);
+	            scores.Se += parseInt(document.getElementById('slider-Se4').value);
+	            scores.Ne += parseInt(document.getElementById('slider-Ne4').value);
+	            scores.Si += parseInt(document.getElementById('slider-Si4').value);
+	            scores.Ni += parseInt(document.getElementById('slider-Ni4').value);
+	            scores.Te += parseInt(document.getElementById('slider-Te4').value);
+	            scores.Fe += parseInt(document.getElementById('slider-Fe4').value);
+	            scores.Ti += parseInt(document.getElementById('slider-Ti4').value);
+	            scores.Fi += parseInt(document.getElementById('slider-Fi4').value);
+	            scores.Se += parseInt(document.getElementById('slider-Se5').value);
+	            scores.Ne += parseInt(document.getElementById('slider-Ne5').value);
+	            scores.Si += parseInt(document.getElementById('slider-Si5').value);
+	            scores.Ni += parseInt(document.getElementById('slider-Ni5').value);
+	            scores.Te += parseInt(document.getElementById('slider-Te5').value);
+	            scores.Fe += parseInt(document.getElementById('slider-Fe5').value);
+	            scores.Ti += parseInt(document.getElementById('slider-Ti5').value);
+	            scores.Fi += parseInt(document.getElementById('slider-Fi5').value);
+	
+	            // 將分數存儲到 localStorage
+	            localStorage.setItem('mbtiScores', JSON.stringify(scores));
+	
+	            // 跳轉到結果頁面
+	            window.location.href = 'result.html';
+	        };
+	        
+	        // 随机生成按钮功能
+	        document.getElementById('randomButton').addEventListener('click', function() {
+	            const scores = {
+	                Ne: Math.floor(Math.random() * 26), // 0-25的随机数
+	                Ni: Math.floor(Math.random() * 26),
+	                Se: Math.floor(Math.random() * 26),
+	                Si: Math.floor(Math.random() * 26),
+	                Te: Math.floor(Math.random() * 26),
+	                Ti: Math.floor(Math.random() * 26),
+	                Fe: Math.floor(Math.random() * 26),
+	                Fi: Math.floor(Math.random() * 26)
+	            };
+	            
+	            // 将分数存储到 localStorage
+	            localStorage.setItem('mbtiScores', JSON.stringify(scores));
+	            
+	            // 跳转到结果页面
+	            window.location.href = 'result.html';
+	        });
+	    });
+	</script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
