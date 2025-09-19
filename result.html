@@ -334,7 +334,7 @@
       for (let i = 0; i < pointCount; i++) {
         const funcName = sortedScores[i][0];
         const funcScore = sortedScores[i][1];
-        const descriptionIndex = funcScore >= 20 ? 0 : 1; // 修改索引为0或1
+        const descriptionIndex = funcScore >= 20 ? 1 : 0; // 修改索引为1或0
         const description = functionDescriptions[funcName][descriptionIndex];
         
         pointsHTML += `<li><strong>${funcName}</strong>：${description}</li>`;
@@ -404,138 +404,190 @@
       return "一般功能鏈";
     }
     
-    // --------------- 新增：生成主导功能和辅助功能 ---------------
-    function generateFunctionAnalysis() {
-      const topFunc = sortedScores[0];
-      const topFuncName = topFunc[0];
-      const topFuncScore = topFunc[1];
-      
-      // 1. 确定主导功能
-      const dominantFunctions = [topFunc];
-      
-      // 2. 找出同倾向功能
-      const topOrientation = functionOrientations[topFuncName];
-      const sameOrientationFuncs = sortedScores.filter(
-        ([func, score]) => functionOrientations[func] === topOrientation && 
-                          func !== topFuncName && 
-                          score >= 15 && 
-                          Math.abs(score - topFuncScore) <= 5
-      );
-      
-      // 3. 添加第二主导功能
-      if (sameOrientationFuncs.length > 0) {
-        sameOrientationFuncs.sort((a, b) => b[1] - a[1]);
-        dominantFunctions.push(sameOrientationFuncs[0]);
-        
-        // 4. 检查是否需要添加第三、第四主导功能
-        for (let i = 1; i < sameOrientationFuncs.length; i++) {
-          if (Math.abs(sameOrientationFuncs[i][1] - sameOrientationFuncs[0][1]) <= 1) {
-            dominantFunctions.push(sameOrientationFuncs[i]);
-          }
-        }
-      }
-      
-      // 5. 找出相反倾向功能 (辅助功能)
-      const oppositeOrientationFuncs = sortedScores.filter(
-        ([func, score]) => functionOrientations[func] !== topOrientation
-      );
-      
-      // 6. 分组相反倾向功能
-      const sameGroupOpposites = oppositeOrientationFuncs.filter(
-        ([func, score]) => functionGroups[func] === functionGroups[topFuncName]
-      );
-      
-      const differentGroupOpposites = oppositeOrientationFuncs.filter(
-        ([func, score]) => functionGroups[func] !== functionGroups[topFuncName]
-      );
-      
-      // 7. 选择辅助功能
-      const auxiliaryFunctions = [];
-      
-      // 选择同组别较高分者
-      if (sameGroupOpposites.length > 0) {
-        sameGroupOpposites.sort((a, b) => b[1] - a[1]);
-        auxiliaryFunctions.push(sameGroupOpposites[0]);
-      }
-      
-      // 选择不同组别较高分者
-      if (differentGroupOpposites.length > 0) {
-        differentGroupOpposites.sort((a, b) => b[1] - a[1]);
-        auxiliaryFunctions.push(differentGroupOpposites[0]);
-      }
-      
-      // 8. 检查功能链匹配
-      const functionChains = [];
-      
-      for (const auxFunc of auxiliaryFunctions) {
-        const auxFuncName = auxFunc[0];
-        let hasPerceptionChain = false;
-        let hasJudgmentChain = false;
-        let hasMBTIChain = false;
-        
-        for (const domFunc of dominantFunctions) {
-          const domFuncName = domFunc[0];
-          const chainType = getFunctionChainType(domFuncName, auxFuncName);
-          
-          if (chainType === "感知功能鏈") hasPerceptionChain = true;
-          if (chainType === "判斷功能鏈") hasJudgmentChain = true;
-          if (chainType === "MBTI功能鏈") hasMBTIChain = true;
-        }
-        
-        // 如果辅助功能不能完成两种匹配，可能需要添加另一个辅助功能
-        if ((hasPerceptionChain && hasJudgmentChain) || (hasPerceptionChain && hasMBTIChain) || (hasJudgmentChain && hasMBTIChain)) {
-          // 辅助功能可以完成匹配
-          for (const domFunc of dominantFunctions) {
-            const domFuncName = domFunc[0];
-            const chainType = getFunctionChainType(domFuncName, auxFuncName);
-            functionChains.push(`${domFuncName}-${auxFuncName}(${chainType})`);
-          }
-        }
-      }
-      
-      // 9. 生成最终文本
-      let finalText = "";
-      
-      // 主导功能描述
-      for (let i = 0; i < dominantFunctions.length; i++) {
-        const [func, score] = dominantFunctions[i];
-        const descriptionIndex = score >= 20 ? 0 : 1; // 修改索引为0或1
-        const description = functionParagraphs[func][descriptionIndex];
-        
-        const order = i === 0 ? "主導" : 
-                     i === 1 ? "第二主導" : 
-                     i === 2 ? "第三主導" : "第四主導";
-                     
-        finalText += `<p><strong>${order}功能 ${func}</strong>：${description}</p>`;
-      }
-      
-      // 辅助功能描述
-      if (auxiliaryFunctions.length > 0) {
-        for (const [func, score] of auxiliaryFunctions) {
-          const strength = score >= topFuncScore * 0.75 ? 
-                          (Math.abs(score - topFuncScore) <= 3 ? "（較強）" : "") : 
-                          "（較弱）";
-          
-          const descriptionIndex = score >= 20 ? 0 : 1; // 修改索引为0或1
-          const description = functionParagraphs[func][descriptionIndex];
-          
-          // 找出相关的功能链
-          const relevantChains = functionChains.filter(chain => chain.includes(func));
-          
-          let chainText = "";
-          if (relevantChains.length > 0) {
-            chainText = `與${relevantChains.map(chain => {
-              const [domFunc] = chain.split('-');
-              return `主導功能${domFunc}組成${chain.split('(')[1].replace(')', '')}`;
-            }).join("，同時與")}`;
-          }
-          
-          finalText += `<p><strong>輔助功能${strength} ${func}</strong>${chainText ? ` ${chainText}` : ""}：${description}</p>`;
-        }
-      }
-      
-      return finalText;
-    }
+	// --------------- 新增：生成主导功能和辅助功能 ---------------
+	function generateFunctionAnalysis() {
+	  const topFunc = sortedScores[0];
+	  const topFuncName = topFunc[0];
+	  const topFuncScore = topFunc[1];
+	  
+	  // 1. 确定主导功能
+	  const dominantFunctions = [topFunc];
+	  
+	  // 2. 找出同倾向功能
+	  const topOrientation = functionOrientations[topFuncName];
+	  const sameOrientationFuncs = sortedScores.filter(
+	    ([func, score]) => functionOrientations[func] === topOrientation && 
+	                      func !== topFuncName && 
+	                      score >= 15 && 
+	                      Math.abs(score - topFuncScore) <= 5
+	  );
+	  
+	  // 3. 添加第二主导功能
+	  if (sameOrientationFuncs.length > 0) {
+	    sameOrientationFuncs.sort((a, b) => b[1] - a[1]);
+	    dominantFunctions.push(sameOrientationFuncs[0]);
+	    
+	    // 4. 检查是否需要添加第三、第四主导功能
+	    for (let i = 1; i < sameOrientationFuncs.length; i++) {
+	      if (Math.abs(sameOrientationFuncs[i][1] - sameOrientationFuncs[0][1]) <= 1) {
+	        dominantFunctions.push(sameOrientationFuncs[i]);
+	      }
+	    }
+	  }
+	  
+	  // 5. 找出相反倾向功能 (辅助功能)
+	  const oppositeOrientationFuncs = sortedScores.filter(
+	    ([func, score]) => functionOrientations[func] !== topOrientation
+	  );
+	  
+	  // 6. 分组相反倾向功能 - 修正后的逻辑
+	  // 将辅助功能分为两组：Ni/Si为一组，Ti/Fi为一组
+	  const groupA = oppositeOrientationFuncs.filter(
+	    ([func, score]) => ["Ni", "Si"].includes(func)
+	  );
+	  
+	  const groupB = oppositeOrientationFuncs.filter(
+	    ([func, score]) => ["Ti", "Fi"].includes(func)
+	  );
+	  
+	  // 7. 选择辅助功能 - 修正后的逻辑
+	  const auxiliaryFunctions = [];
+	  
+	  // 从每组中选择最高分者
+	  let candidateA = groupA.length > 0 ? groupA[0] : null;
+	  let candidateB = groupB.length > 0 ? groupB[0] : null;
+	  
+	  // 8. 检查功能链匹配 - 修正后的逻辑
+	  const functionChains = [];
+	  const matchedAuxFunctions = [];
+	  
+	  // 首先尝试用candidateA完成两种匹配
+	  if (candidateA) {
+	    const auxFuncName = candidateA[0];
+	    let hasPerceptionOrJudgmentChain = false;
+	    let hasMBTIChain = false;
+	    
+	    for (const domFunc of dominantFunctions) {
+	      const domFuncName = domFunc[0];
+	      const chainType = getFunctionChainType(domFuncName, auxFuncName);
+	      
+	      if (chainType === "感知功能鏈" || chainType === "判斷功能鏈") {
+	        hasPerceptionOrJudgmentChain = true;
+	      }
+	      if (chainType === "MBTI功能鏈") {
+	        hasMBTIChain = true;
+	      }
+	      
+	      if (hasPerceptionOrJudgmentChain && hasMBTIChain) {
+	        functionChains.push(`${domFuncName}-${auxFuncName}(${chainType})`);
+	        matchedAuxFunctions.push(candidateA);
+	        break;
+	      }
+	    }
+	  }
+	  
+	  // 如果candidateA无法完成两种匹配，尝试用candidateB完成剩下的匹配
+	  if (candidateB && matchedAuxFunctions.length === 0) {
+	    const auxFuncName = candidateB[0];
+	    let hasPerceptionOrJudgmentChain = false;
+	    let hasMBTIChain = false;
+	    
+	    for (const domFunc of dominantFunctions) {
+	      const domFuncName = domFunc[0];
+	      const chainType = getFunctionChainType(domFuncName, auxFuncName);
+	      
+	      if (chainType === "感知功能鏈" || chainType === "判斷功能鏈") {
+	        hasPerceptionOrJudgmentChain = true;
+	      }
+	      if (chainType === "MBTI功能鏈") {
+	        hasMBTIChain = true;
+	      }
+	      
+	      if (hasPerceptionOrJudgmentChain && hasMBTIChain) {
+	        functionChains.push(`${domFuncName}-${auxFuncName}(${chainType})`);
+	        matchedAuxFunctions.push(candidateB);
+	        break;
+	      }
+	    }
+	  }
+	  
+	  // 如果只有一个候选，但仍然需要完成两种匹配
+	  if (matchedAuxFunctions.length === 0 && (candidateA || candidateB)) {
+	    const candidate = candidateA || candidateB;
+	    const auxFuncName = candidate[0];
+	    
+	    // 找出所有可能的匹配
+	    const possibleChains = [];
+	    for (const domFunc of dominantFunctions) {
+	      const domFuncName = domFunc[0];
+	      const chainType = getFunctionChainType(domFuncName, auxFuncName);
+	      possibleChains.push({domFuncName, auxFuncName, chainType});
+	    }
+	    
+	    // 检查是否能找到两种不同类型的匹配
+	    const perceptionOrJudgmentChain = possibleChains.find(chain => 
+	      chain.chainType === "感知功能鏈" || chain.chainType === "判斷功能鏈"
+	    );
+	    
+	    const mbtiChain = possibleChains.find(chain => 
+	      chain.chainType === "MBTI功能鏈"
+	    );
+	    
+	    if (perceptionOrJudgmentChain && mbtiChain) {
+	      functionChains.push(
+	        `${perceptionOrJudgmentChain.domFuncName}-${auxFuncName}(${perceptionOrJudgmentChain.chainType})`,
+	        `${mbtiChain.domFuncName}-${auxFuncName}(${mbtiChain.chainType})`
+	      );
+	      matchedAuxFunctions.push(candidate);
+	    }
+	  }
+	  
+	  // 9. 生成最终文本
+	  let finalText = "";
+	  
+	  // 主导功能描述
+	  for (let i = 0; i < dominantFunctions.length; i++) {
+	    const [func, score] = dominantFunctions[i];
+	    const descriptionIndex = score >= 20 ? 0 : 1;
+	    const description = functionParagraphs[func][descriptionIndex];
+	    
+	    const order = i === 0 ? "主導" : 
+	                 i === 1 ? "第二主導" : 
+	                 i === 2 ? "第三主導" : "第四主導";
+	                 
+	    finalText += `<p><strong>${order}功能 ${func}</strong>：${description}</p>`;
+	  }
+	  
+	  // 辅助功能描述
+	  if (matchedAuxFunctions.length > 0) {
+	    // 按分数排序辅助功能
+	    matchedAuxFunctions.sort((a, b) => b[1] - a[1]);
+	    
+	    for (const [func, score] of matchedAuxFunctions) {
+	      const strength = score >= topFuncScore * 0.75 ? 
+	                      (Math.abs(score - topFuncScore) <= 3 ? "（較強）" : "") : 
+	                      "（較弱）";
+	      
+	      const descriptionIndex = score >= 20 ? 0 : 1;
+	      const description = functionParagraphs[func][descriptionIndex];
+	      
+	      // 找出相关的功能链
+	      const relevantChains = functionChains.filter(chain => chain.includes(func));
+	      
+	      let chainText = "";
+	      if (relevantChains.length > 0) {
+	        chainText = `與${relevantChains.map(chain => {
+	          const [domFunc] = chain.split('-');
+	          return `主導功能${domFunc}組成${chain.split('(')[1].replace(')', '')}`;
+	        }).join("，同時與")}`;
+	      }
+	      
+	      finalText += `<p><strong>輔助功能${strength} ${func}</strong>${chainText ? ` ${chainText}` : ""}：${description}</p>`;
+	    }
+	  }
+	  
+	  return finalText;
+	}
 
     const finalParagraph = generateFunctionAnalysis();
 
@@ -550,6 +602,7 @@
   </script>
 </body>
 </html>
+
 
 
 
