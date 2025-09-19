@@ -199,14 +199,16 @@
     tableBody.appendChild(funcRow);
     tableBody.appendChild(scoreRow);
     
-    // 生成棒形圖
+    // 生成棒形圖 - 修复条形图显示
     sortedScores.forEach(([func, value]) => {
       const bar = document.createElement('div');
       bar.className = 'bar';
       bar.innerHTML = `
         <div class="bar-label">${func}</div>
-        <div class'bar-fill' style="width: ${value * 100 / maxScore}%;">
-          ${value}
+        <div class="bar-container">
+          <div class="bar-fill" style="width: ${value * 100 / maxScore}%;">
+            <span class="bar-value">${value}</span>
+          </div>
         </div>
       `;
       resultsDiv.appendChild(bar);
@@ -305,7 +307,7 @@
       ],
       Te: [
         "你善於組織和管理，善於擔任領導角色，行事有計劃、追求效率，喜歡用最快的方法達到目的、解決問題，也會將身處的環境打理得整整齊齊。",
-        "你的組織和領導能力不錯，可以顧全大局作出決策，行事傾向先計畫和追求效率，儘快達到目的解決問題."
+        "你的組織和領導能力不錯，可以顧全大局作出決策，行事傾向先計畫和追求效率，儘快達到目的解決問題。"
       ],
       Ti: [
         "你的分析力強，腦海裏有很清晰的邏輯，善於發現身邊事物的邏輯問題，著重分析和解決問題的過程，但經常容易與人辯論，渴望證明自己的邏輯。",
@@ -386,8 +388,8 @@
 	    const introvertedFunctions = ["Ni", "Si", "Ti", "Fi"];
 	    const extrovertedFunctions = ["Ne", "Se", "Te", "Fe"];
 	    
-	    const allIntroverted = firstThreeFunctions.every(func => introvertedFunctions.includes(func));
-	    const allExtroverted = firstThreeFunctions.every(func => extrovertedFunctions.includes(func));
+	    const allIntroverted = firstThreeFunctions.every(func => introvertedFunctions.includes(func);
+	    const allExtroverted = firstThreeFunctions.every(func => extrovertedFunctions.includes(func);
 	    
 	    if (allIntroverted) {
 	      pointsHTML += "<p>你的首三功能都是内傾功能：<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;你是一個超級I人！</p>";
@@ -482,55 +484,74 @@
 	      mbtiAuxiliaryFunc = func1;
 	    }
 	    
-	    // 直接添加MBTI功能链，不检查主导功能是否在列表中
+	    // 直接添加MBTI功能链
 	    functionChains.push(`${mbtiDominantFunc}-${mbtiAuxiliaryFunc}(MBTI功能鏈)`);
 	    matchedAuxFunctions.push([mbtiAuxiliaryFunc, scores[mbtiAuxiliaryFunc]]);
-	  }
-	  
-	  // 然后处理感知/判断功能链
-	  // 首先尝试用candidateA
-	  if (candidateA && !matchedAuxFunctions.some(([func]) => func === candidateA[0])) {
-	    const auxFuncName = candidateA[0];
-	    let chainType = null;
-	    let matchedDomFunc = null;
 	    
+	    // 检查MBTI辅助功能是否能与任何主导功能组成感知/判断功能链
 	    for (const domFunc of dominantFunctions) {
 	      const domFuncName = domFunc[0];
-	      const detectedChainType = getFunctionChainType(domFuncName, auxFuncName);
-	      
-	      if (detectedChainType === "感知功能鏈" || detectedChainType === "判斷功能鏈") {
-	        chainType = detectedChainType;
-	        matchedDomFunc = domFuncName;
-	        break;
+	      if (domFuncName !== mbtiDominantFunc) {
+	        const chainType = getFunctionChainType(domFuncName, mbtiAuxiliaryFunc);
+	        if (chainType === "感知功能鏈" || chainType === "判斷功能鏈") {
+	          functionChains.push(`${domFuncName}-${mbtiAuxiliaryFunc}(${chainType})`);
+	          break; // 找到一个匹配就足够
+	        }
 	      }
-	    }
-	    
-	    if (chainType) {
-	      functionChains.push(`${matchedDomFunc}-${auxFuncName}(${chainType})`);
-	      matchedAuxFunctions.push(candidateA);
 	    }
 	  }
 	  
-	  // 然后尝试用candidateB
-	  if (candidateB && !matchedAuxFunctions.some(([func]) => func === candidateB[0])) {
-	    const auxFuncName = candidateB[0];
-	    let chainType = null;
-	    let matchedDomFunc = null;
-	    
-	    for (const domFunc of dominantFunctions) {
-	      const domFuncName = domFunc[0];
-	      const detectedChainType = getFunctionChainType(domFuncName, auxFuncName);
+	  // 如果MBTI功能链已经完成了两种匹配，直接返回结果
+	  const hasBothChains = functionChains.some(chain => chain.includes("MBTI功能鏈")) && 
+	                       (functionChains.some(chain => chain.includes("感知功能鏈")) || 
+	                        functionChains.some(chain => chain.includes("判斷功能鏈")));
+	  
+	  if (!hasBothChains) {
+	    // 处理感知/判断功能链
+	    // 首先尝试用candidateA
+	    if (candidateA && !matchedAuxFunctions.some(([func]) => func === candidateA[0])) {
+	      const auxFuncName = candidateA[0];
+	      let chainType = null;
+	      let matchedDomFunc = null;
 	      
-	      if (detectedChainType === "感知功能鏈" || detectedChainType === "判斷功能鏈") {
-	        chainType = detectedChainType;
-	        matchedDomFunc = domFuncName;
-	        break;
+	      for (const domFunc of dominantFunctions) {
+	        const domFuncName = domFunc[0];
+	        const detectedChainType = getFunctionChainType(domFuncName, auxFuncName);
+	        
+	        if (detectedChainType === "感知功能鏈" || detectedChainType === "判斷功能鏈") {
+	          chainType = detectedChainType;
+	          matchedDomFunc = domFuncName;
+	          break;
+	        }
+	      }
+	      
+	      if (chainType) {
+	        functionChains.push(`${matchedDomFunc}-${auxFuncName}(${chainType})`);
+	        matchedAuxFunctions.push(candidateA);
 	      }
 	    }
 	    
-	    if (chainType) {
-	      functionChains.push(`${matchedDomFunc}-${auxFuncName}(${chainType})`);
-	      matchedAuxFunctions.push(candidateB);
+	    // 然后尝试用candidateB
+	    if (candidateB && !matchedAuxFunctions.some(([func]) => func === candidateB[0])) {
+	      const auxFuncName = candidateB[0];
+	      let chainType = null;
+	      let matchedDomFunc = null;
+	      
+	      for (const domFunc of dominantFunctions) {
+	        const domFuncName = domFunc[0];
+	        const detectedChainType = getFunctionChainType(domFuncName, auxFuncName);
+	        
+	        if (detectedChainType === "感知功能鏈" || detectedChainType === "判斷功能鏈") {
+	          chainType = detectedChainType;
+	          matchedDomFunc = domFuncName;
+	          break;
+	        }
+	      }
+	      
+	      if (chainType) {
+	        functionChains.push(`${matchedDomFunc}-${auxFuncName}(${chainType})`);
+	        matchedAuxFunctions.push(candidateB);
+	      }
 	    }
 	  }
 	  
@@ -570,8 +591,9 @@
 	      if (relevantChains.length > 0) {
 	        chainText = `與${relevantChains.map(chain => {
 	          const [domFunc] = chain.split('-');
-	          return `主導功能${domFunc}組成${chain.split('(')[1].replace(')', '')}`;
-	        }).join("，同時與")}`;
+	          const chainType = chain.split('(')[1].replace(')', '');
+	          return `主導功能${domFunc}組成${chainType}`;
+	        }).join("，並與")}`;
 	      }
 	      
 	      finalText += `<p><strong>輔助功能${strength} ${func}</strong>${chainText ? ` ${chainText}` : ""}：${description}</p>`;
@@ -594,6 +616,7 @@
   </script>
 </body>
 </html>
+
 
 
 
