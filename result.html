@@ -205,7 +205,7 @@
       bar.className = 'bar';
       bar.innerHTML = `
         <div class="bar-label">${func}</div>
-        <div class="bar-fill" style="width: ${value * 100 / maxScore}%;">
+        <div class'bar-fill' style="width: ${value * 100 / maxScore}%;">
           ${value}
         </div>
       `;
@@ -213,9 +213,6 @@
     });
 
     // --------------- 2) MBTI 產生邏輯：找最高、次高分功能 → 兩個候選 ---------------
-    const topFuncName = sortedScores[0][0];     // 第一高分功能
-    const secondFuncName = sortedScores[1][0];  // 第二高分功能
-
     // 依功能找出搭配的功能，組合出 MBTI
     function getMBTICandidate(funcName) {
       let orientation, letter2, letter3, letter4, pairedFunc;
@@ -251,26 +248,31 @@
       // 分數總和用於比較
       const sumScores = scores[funcName] + scores[pairedFunc];
       const mbti = orientation + letter2 + letter3 + letter4;
-      return { mbti, sumScores, pairedFunc };
+      return { mbti, sumScores, pairedFunc, mainFunc: funcName };
     }
 
-    const candidate1 = getMBTICandidate(topFuncName);
-    const candidate2 = getMBTICandidate(secondFuncName);
+    // 對前三個高分功能進行MBTI配對
+    const mbtiCandidates = [];
+    for (let i = 0; i < Math.min(3, sortedScores.length); i++) {
+      const funcName = sortedScores[i][0];
+      mbtiCandidates.push(getMBTICandidate(funcName));
+    }
 
-    // 比較兩個候選 MBTI 的 2功能分數
+    // 按總分排序MBTI候選
+    mbtiCandidates.sort((a, b) => b.sumScores - a.sumScores);
+
     let finalFirstChoice, finalSecondChoice, mbtiFunctions;
-    if (candidate1.sumScores >= candidate2.sumScores) {
-      finalFirstChoice = candidate1.mbti;
-      finalSecondChoice = candidate2.mbti;
-      mbtiFunctions = [topFuncName, candidate1.pairedFunc];
-    } else {
-      finalFirstChoice = candidate2.mbti;
-      finalSecondChoice = candidate1.mbti;
-      mbtiFunctions = [secondFuncName, candidate2.pairedFunc];
+    if (mbtiCandidates.length > 0) {
+      finalFirstChoice = mbtiCandidates[0].mbti;
+      mbtiFunctions = [mbtiCandidates[0].mainFunc, mbtiCandidates[0].pairedFunc];
+      
+      if (mbtiCandidates.length > 1) {
+        finalSecondChoice = mbtiCandidates[1].mbti;
+      }
     }
 
-    document.getElementById('finalFirstChoice').innerText = finalFirstChoice;
-    document.getElementById('finalSecondChoice').innerText = finalSecondChoice;
+    document.getElementById('finalFirstChoice').innerText = finalFirstChoice || 'N/A';
+    document.getElementById('finalSecondChoice').innerText = finalSecondChoice || 'N/A';
 
     // --------------- 新增：功能描述字典 ---------------
     const functionDescriptions = {
@@ -303,7 +305,7 @@
       ],
       Te: [
         "你善於組織和管理，善於擔任領導角色，行事有計劃、追求效率，喜歡用最快的方法達到目的、解決問題，也會將身處的環境打理得整整齊齊。",
-        "你的組織和領導能力不錯，可以顧全大局作出決策，行事傾向先計畫和追求效率，儘快達到目的解決問題。"
+        "你的組織和領導能力不錯，可以顧全大局作出決策，行事傾向先計畫和追求效率，儘快達到目的解決問題."
       ],
       Ti: [
         "你的分析力強，腦海裏有很清晰的邏輯，善於發現身邊事物的邏輯問題，著重分析和解決問題的過程，但經常容易與人辯論，渴望證明自己的邏輯。",
@@ -480,13 +482,9 @@
 	      mbtiAuxiliaryFunc = func1;
 	    }
 	    
-	    // 检查主导功能是否在主导功能列表中
-	    const isDominant = dominantFunctions.some(([func]) => func === mbtiDominantFunc);
-	    
-	    if (isDominant) {
-	      functionChains.push(`${mbtiDominantFunc}-${mbtiAuxiliaryFunc}(MBTI功能鏈)`);
-	      matchedAuxFunctions.push([mbtiAuxiliaryFunc, scores[mbtiAuxiliaryFunc]]);
-	    }
+	    // 直接添加MBTI功能链，不检查主导功能是否在列表中
+	    functionChains.push(`${mbtiDominantFunc}-${mbtiAuxiliaryFunc}(MBTI功能鏈)`);
+	    matchedAuxFunctions.push([mbtiAuxiliaryFunc, scores[mbtiAuxiliaryFunc]]);
 	  }
 	  
 	  // 然后处理感知/判断功能链
@@ -596,6 +594,7 @@
   </script>
 </body>
 </html>
+
 
 
 
