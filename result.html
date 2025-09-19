@@ -317,6 +317,96 @@
       ]
     };
 
+	// --------------- 新增：功能倾向分类 ---------------
+	const functionOrientations = {
+	  Ne: "E", Ni: "I", Se: "E", Si: "I", 
+	  Te: "E", Ti: "I", Fe: "E", Fi: "I"
+	};
+	
+	// --------------- 修改：functionGroups 定义 ---------------
+	const functionGroups = {
+	  Ne: "N", Ni: "N", Se: "S", Si: "S", 
+	  Te: "T", Ti: "T", Fe: "F", Fi: "F"
+	};
+	
+	// --------------- 新增：判断功能链类型 ---------------
+	function getFunctionChainType(func1, func2) {
+	  const domGroup = functionGroups[func1];
+	  const auxGroup = functionGroups[func2];
+	  
+	  // 感知功能链 (N/S)
+	  if ((domGroup === "N" || domGroup === "S") && 
+	      (auxGroup === "N" || auxGroup === "S")) {
+	    return "感知功能鏈";
+	  }
+	  
+	  // 判断功能链 (T/F)
+	  if ((domGroup === "T" || domGroup === "F") && 
+	      (auxGroup === "T" || auxGroup === "F")) {
+	    return "判斷功能鏈";
+	  }
+	  
+	  // MBTI功能链 (根据标准功能链)
+	  const mbtiChains = [
+	    ['Ni', 'Te'], ['Ni', 'Fe'], ['Ne', 'Ti'], ['Ne', 'Fi'],
+	    ['Si', 'Te'], ['Si', 'Fe'], ['Se', 'Ti'], ['Se', 'Fi'],
+	    ['Ti', 'Ne'], ['Ti', 'Se'], ['Te', 'Ni'], ['Te', 'Si'],
+	    ['Fi', 'Ne'], ['Fi', 'Se'], ['Fe', 'Ni'], ['Fe', 'Si']
+	  ];
+	  
+	  if (mbtiChains.some(chain => chain[0] === func1 && chain[1] === func2)) {
+	    return "MBTI功能鏈";
+	  }
+	  
+	  return "一般功能鏈";
+	}
+	
+	// --------------- 新增：生成功能描述点 ---------------
+	function generateFunctionPoints() {
+	  let pointsHTML = "<p><strong>根據你較高分的幾個功能，你的性格特質是：</strong></p><ol>";
+	  let pointCount = 2; // 默认显示前两个功能
+	  
+	  // 检查是否需要添加第三个功能
+	  if (sortedScores.length > 2) {
+	    const secondThirdDiff = sortedScores[1][1] - sortedScores[2][1];
+	    const thirdFourthDiff = sortedScores.length > 3 ? sortedScores[2][1] - sortedScores[3][1] : 0;
+	    
+	    if (secondThirdDiff < thirdFourthDiff) {
+	      pointCount = 3;
+	    }
+	  }
+	  
+	  // 生成功能描述点
+	  for (let i = 0; i < pointCount && i < sortedScores.length; i++) {
+	    const funcName = sortedScores[i][0];
+	    const funcScore = sortedScores[i][1];
+	    const descriptionIndex = funcScore >= 20 ? 0 : 1;
+	    const description = functionDescriptions[funcName][descriptionIndex];
+	    
+	    pointsHTML += `<li><strong>${funcName}</strong>：${description}</li>`;
+	  }
+	  
+	  pointsHTML += "</ol>";
+	  
+	  // 检查是否为超级I人或E人
+	  if (sortedScores.length >= 3) {
+	    const firstThreeFunctions = sortedScores.slice(0, 3).map(score => score[0]);
+	    const introvertedFunctions = ["Ni", "Si", "Ti", "Fi"];
+	    const extrovertedFunctions = ["Ne", "Se", "Te", "Fe"];
+	    
+	    const allIntroverted = firstThreeFunctions.every(func => introvertedFunctions.includes(func));
+	    const allExtroverted = firstThreeFunctions.every(func => extrovertedFunctions.includes(func));
+	    
+	    if (allIntroverted) {
+	      pointsHTML += "<p>你的首三功能都是内傾功能：<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;你是一個超級I人！</p>";
+	    } else if (allExtroverted) {
+	      pointsHTML += "<p>你的首三功能都是外傾功能：<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;你是一個超級E人！</p>";
+	    }
+	  }
+	  
+	  return pointsHTML;
+	}
+	
 	// --------------- 新增：生成主导功能和辅助功能 ---------------
 	function generateFunctionAnalysis() {
 	  const topFunc = sortedScores[0];
@@ -516,6 +606,7 @@
   </script>
 </body>
 </html>
+
 
 
 
