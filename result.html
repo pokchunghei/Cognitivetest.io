@@ -251,20 +251,22 @@
       // 分數總和用於比較
       const sumScores = scores[funcName] + scores[pairedFunc];
       const mbti = orientation + letter2 + letter3 + letter4;
-      return { mbti, sumScores };
+      return { mbti, sumScores, pairedFunc };
     }
 
     const candidate1 = getMBTICandidate(topFuncName);
     const candidate2 = getMBTICandidate(secondFuncName);
 
     // 比較兩個候選 MBTI 的 2功能分數
-    let finalFirstChoice, finalSecondChoice;
+    let finalFirstChoice, finalSecondChoice, mbtiFunctions;
     if (candidate1.sumScores >= candidate2.sumScores) {
       finalFirstChoice = candidate1.mbti;
       finalSecondChoice = candidate2.mbti;
+      mbtiFunctions = [topFuncName, candidate1.pairedFunc];
     } else {
       finalFirstChoice = candidate2.mbti;
       finalSecondChoice = candidate1.mbti;
+      mbtiFunctions = [secondFuncName, candidate2.pairedFunc];
     }
 
     document.getElementById('finalFirstChoice').innerText = finalFirstChoice;
@@ -344,18 +346,6 @@
 	  if ((domGroup === "T" || domGroup === "F") && 
 	      (auxGroup === "T" || auxGroup === "F")) {
 	    return "判斷功能鏈";
-	  }
-	  
-	  // MBTI功能链 (根据标准功能链)
-	  const mbtiChains = [
-	    ['Ni', 'Te'], ['Ni', 'Fe'], ['Ne', 'Ti'], ['Ne', 'Fi'],
-	    ['Si', 'Te'], ['Si', 'Fe'], ['Se', 'Ti'], ['Se', 'Fi'],
-	    ['Ti', 'Ne'], ['Ti', 'Se'], ['Te', 'Ni'], ['Te', 'Si'],
-	    ['Fi', 'Ne'], ['Fi', 'Se'], ['Fe', 'Ni'], ['Fe', 'Si']
-	  ];
-	  
-	  if (mbtiChains.some(chain => chain[0] === func1 && chain[1] === func2)) {
-	    return "MBTI功能鏈";
 	  }
 	  
 	  return "一般功能鏈";
@@ -458,10 +448,10 @@
 	  } else {
 	    // 主导功能是内倾，辅助功能应该是外倾
 	    groupA = oppositeOrientationFuncs.filter(
-	      ([func, score]) => ["Ne", "Se"].includes(func)
+	      ([func, score]) => ["Ne", 'Se'].includes(func)
 	    );
 	    groupB = oppositeOrientationFuncs.filter(
-	      ([func, score]) => ["Te", "Fe"].includes(func)
+	      ([func, score]) => ["Te", 'Fe'].includes(func)
 	    );
 	  }
 	  
@@ -476,96 +466,74 @@
 	  const functionChains = [];
 	  const matchedAuxFunctions = [];
 	  
-	  // 首先尝试用candidateA完成两种匹配
-	  if (candidateA) {
-	    const auxFuncName = candidateA[0];
-	    let hasPerceptionOrJudgmentChain = false;
-	    let hasMBTIChain = false;
-	    let matchedDomFunc = null;
+	  // 首先处理MBTI功能链（基于MBTI结果）
+	  if (mbtiFunctions && mbtiFunctions.length === 2) {
+	    // 找出分数较低的那个作为辅助功能
+	    const [func1, func2] = mbtiFunctions;
+	    let mbtiAuxiliaryFunc, mbtiDominantFunc;
 	    
-	    for (const domFunc of dominantFunctions) {
-	      const domFuncName = domFunc[0];
-	      const chainType = getFunctionChainType(domFuncName, auxFuncName);
-	      
-	      if (chainType === "感知功能鏈" || chainType === "判斷功能鏈") {
-	        hasPerceptionOrJudgmentChain = true;
-	        matchedDomFunc = domFuncName;
-	      }
-	      if (chainType === "MBTI功能鏈") {
-	        hasMBTIChain = true;
-	        matchedDomFunc = domFuncName;
-	      }
-	      
-	      if (hasPerceptionOrJudgmentChain && hasMBTIChain) {
-	        functionChains.push(`${domFuncName}-${auxFuncName}(${chainType})`);
-	        matchedAuxFunctions.push(candidateA);
-	        break;
-	      }
+	    if (scores[func1] > scores[func2]) {
+	      mbtiDominantFunc = func1;
+	      mbtiAuxiliaryFunc = func2;
+	    } else {
+	      mbtiDominantFunc = func2;
+	      mbtiAuxiliaryFunc = func1;
 	    }
-
-		// 如果找到一种匹配，记录它
-		if ((hasPerceptionOrJudgmentChain || hasMBTIChain) && !matchedAuxFunctions.includes(candidateA)) {
-		  // 确定具体的链类型
-		  let actualChainType = "";
-		  if (hasPerceptionOrJudgmentChain) {
-		    // 需要确定是感知还是判断链
-		    const domGroup = functionGroups[matchedDomFunc];
-		    const auxGroup = functionGroups[auxFuncName];
-		    actualChainType = (domGroup === "N" || domGroup === "S") && (auxGroup === "N" || auxGroup === "S") 
-		      ? "感知功能鏈" : "判斷功能鏈";
-		  } else {
-		    actualChainType = "MBTI功能鏈";
-		  }
-		  functionChains.push(`${matchedDomFunc}-${auxFuncName}(${actualChainType})`);
-		  matchedAuxFunctions.push(candidateA);
-		}
+	    
+	    // 检查主导功能是否在主导功能列表中
+	    const isDominant = dominantFunctions.some(([func]) => func === mbtiDominantFunc);
+	    
+	    if (isDominant) {
+	      functionChains.push(`${mbtiDominantFunc}-${mbtiAuxiliaryFunc}(MBTI功能鏈)`);
+	      matchedAuxFunctions.push([mbtiAuxiliaryFunc, scores[mbtiAuxiliaryFunc]]);
+	    }
 	  }
-		
-	  // 如果candidateA无法完成两种匹配，尝试用candidateB完成剩下的匹配
-	  if (candidateB && matchedAuxFunctions.length < 2) {
-	    const auxFuncName = candidateB[0];
-	    let hasPerceptionOrJudgmentChain = false;
-	    let hasMBTIChain = false;
+	  
+	  // 然后处理感知/判断功能链
+	  // 首先尝试用candidateA
+	  if (candidateA && !matchedAuxFunctions.some(([func]) => func === candidateA[0])) {
+	    const auxFuncName = candidateA[0];
+	    let chainType = null;
 	    let matchedDomFunc = null;
 	    
 	    for (const domFunc of dominantFunctions) {
 	      const domFuncName = domFunc[0];
-	      const chainType = getFunctionChainType(domFuncName, auxFuncName);
+	      const detectedChainType = getFunctionChainType(domFuncName, auxFuncName);
 	      
-	      if (chainType === "感知功能鏈" || chainType === "判斷功能鏈") {
-	        hasPerceptionOrJudgmentChain = true;
+	      if (detectedChainType === "感知功能鏈" || detectedChainType === "判斷功能鏈") {
+	        chainType = detectedChainType;
 	        matchedDomFunc = domFuncName;
-	      }
-	      if (chainType === "MBTI功能鏈") {
-	        hasMBTIChain = true;
-	        matchedDomFunc = domFuncName;
-	      }
-	      
-	      if (hasPerceptionOrJudgmentChain && hasMBTIChain) {
-	        functionChains.push(`${domFuncName}-${auxFuncName}(${chainType})`);
-	        if (!matchedAuxFunctions.some(af => af[0] === auxFuncName)) {
-	          matchedAuxFunctions.push(candidateB);
-	        }
 	        break;
 	      }
 	    }
 	    
-		// 如果找到一种匹配，记录它
-		if ((hasPerceptionOrJudgmentChain || hasMBTIChain) && !matchedAuxFunctions.some(af => af[0] === auxFuncName)) {
-		  // 确定具体的链类型
-		  let actualChainType = "";
-		  if (hasPerceptionOrJudgmentChain) {
-		    // 需要确定是感知还是判断链
-		    const domGroup = functionGroups[matchedDomFunc];
-		    const auxGroup = functionGroups[auxFuncName];
-		    actualChainType = (domGroup === "N" || domGroup === "S") && (auxGroup === "N" || auxGroup === "S") 
-		      ? "感知功能鏈" : "判斷功能鏈";
-		  } else {
-		    actualChainType = "MBTI功能鏈";
-		  }
-		  functionChains.push(`${matchedDomFunc}-${auxFuncName}(${actualChainType})`);
-		  matchedAuxFunctions.push(candidateB);
-		}
+	    if (chainType) {
+	      functionChains.push(`${matchedDomFunc}-${auxFuncName}(${chainType})`);
+	      matchedAuxFunctions.push(candidateA);
+	    }
+	  }
+	  
+	  // 然后尝试用candidateB
+	  if (candidateB && !matchedAuxFunctions.some(([func]) => func === candidateB[0])) {
+	    const auxFuncName = candidateB[0];
+	    let chainType = null;
+	    let matchedDomFunc = null;
+	    
+	    for (const domFunc of dominantFunctions) {
+	      const domFuncName = domFunc[0];
+	      const detectedChainType = getFunctionChainType(domFuncName, auxFuncName);
+	      
+	      if (detectedChainType === "感知功能鏈" || detectedChainType === "判斷功能鏈") {
+	        chainType = detectedChainType;
+	        matchedDomFunc = domFuncName;
+	        break;
+	      }
+	    }
+	    
+	    if (chainType) {
+	      functionChains.push(`${matchedDomFunc}-${auxFuncName}(${chainType})`);
+	      matchedAuxFunctions.push(candidateB);
+	    }
 	  }
 	  
 	  // 9. 生成最终文本
@@ -608,7 +576,7 @@
 	        }).join("，同時與")}`;
 	      }
 	      
-	      finalText += `<p><strong>輔助功能${strength} ${func}</strong>，${chainText ? ` ${chainText}` : ""}：${description}</p>`;
+	      finalText += `<p><strong>輔助功能${strength} ${func}</strong>${chainText ? ` ${chainText}` : ""}：${description}</p>`;
 	    }
 	  }
 	  
@@ -628,6 +596,7 @@
   </script>
 </body>
 </html>
+
 
 
 
