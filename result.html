@@ -502,14 +502,25 @@
 	        break;
 	      }
 	    }
-	    
-	    // 如果找到一种匹配，记录它
-	    if ((hasPerceptionOrJudgmentChain || hasMBTIChain) && !matchedAuxFunctions.includes(candidateA)) {
-	      functionChains.push(`${matchedDomFunc}-${auxFuncName}(${hasPerceptionOrJudgmentChain ? "感知/判斷功能鏈" : "MBTI功能鏈"})`);
-	      matchedAuxFunctions.push(candidateA);
-	    }
+
+		// 如果找到一种匹配，记录它
+		if ((hasPerceptionOrJudgmentChain || hasMBTIChain) && !matchedAuxFunctions.includes(candidateA)) {
+		  // 确定具体的链类型
+		  let actualChainType = "";
+		  if (hasPerceptionOrJudgmentChain) {
+		    // 需要确定是感知还是判断链
+		    const domGroup = functionGroups[matchedDomFunc];
+		    const auxGroup = functionGroups[auxFuncName];
+		    actualChainType = (domGroup === "N" || domGroup === "S") && (auxGroup === "N" || auxGroup === "S") 
+		      ? "感知功能鏈" : "判斷功能鏈";
+		  } else {
+		    actualChainType = "MBTI功能鏈";
+		  }
+		  functionChains.push(`${matchedDomFunc}-${auxFuncName}(${actualChainType})`);
+		  matchedAuxFunctions.push(candidateA);
+		}
 	  }
-	  
+		
 	  // 如果candidateA无法完成两种匹配，尝试用candidateB完成剩下的匹配
 	  if (candidateB && matchedAuxFunctions.length < 2) {
 	    const auxFuncName = candidateB[0];
@@ -539,11 +550,22 @@
 	      }
 	    }
 	    
-	    // 如果找到一种匹配，记录它
-	    if ((hasPerceptionOrJudgmentChain || hasMBTIChain) && !matchedAuxFunctions.some(af => af[0] === auxFuncName)) {
-	      functionChains.push(`${matchedDomFunc}-${auxFuncName}(${hasPerceptionOrJudgmentChain ? "感知/判斷功能鏈" : "MBTI功能鏈"})`);
-	      matchedAuxFunctions.push(candidateB);
-	    }
+		// 如果找到一种匹配，记录它
+		if ((hasPerceptionOrJudgmentChain || hasMBTIChain) && !matchedAuxFunctions.some(af => af[0] === auxFuncName)) {
+		  // 确定具体的链类型
+		  let actualChainType = "";
+		  if (hasPerceptionOrJudgmentChain) {
+		    // 需要确定是感知还是判断链
+		    const domGroup = functionGroups[matchedDomFunc];
+		    const auxGroup = functionGroups[auxFuncName];
+		    actualChainType = (domGroup === "N" || domGroup === "S") && (auxGroup === "N" || auxGroup === "S") 
+		      ? "感知功能鏈" : "判斷功能鏈";
+		  } else {
+		    actualChainType = "MBTI功能鏈";
+		  }
+		  functionChains.push(`${matchedDomFunc}-${auxFuncName}(${actualChainType})`);
+		  matchedAuxFunctions.push(candidateB);
+		}
 	  }
 	  
 	  // 9. 生成最终文本
@@ -606,6 +628,7 @@
   </script>
 </body>
 </html>
+
 
 
 
