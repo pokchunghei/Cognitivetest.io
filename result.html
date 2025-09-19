@@ -317,93 +317,6 @@
       ]
     };
 
-    // --------------- 新增：生成功能描述点 ---------------
-    function generateFunctionPoints() {
-      let pointsHTML = "<p><strong>根據你較高分的幾個功能，你的性格特質是：</strong></p><ol>";
-      let pointCount = 2; // 默认显示前两个功能
-      
-      // 检查是否需要添加第三个功能
-      const secondThirdDiff = sortedScores[1][1] - sortedScores[2][1];
-      const thirdFourthDiff = sortedScores[2][1] - sortedScores[3][1];
-      
-      if (secondThirdDiff < thirdFourthDiff) {
-        pointCount = 3;
-      }
-      
-      // 生成功能描述点
-      for (let i = 0; i < pointCount; i++) {
-        const funcName = sortedScores[i][0];
-        const funcScore = sortedScores[i][1];
-        const descriptionIndex = funcScore >= 20 ? 1 : 0; // 修改索引为1或0
-        const description = functionDescriptions[funcName][descriptionIndex];
-        
-        pointsHTML += `<li><strong>${funcName}</strong>：${description}</li>`;
-      }
-      
-      pointsHTML += "</ol>";
-      
-      // 检查是否为超级I人或E人
-      const firstThreeFunctions = sortedScores.slice(0, 3).map(score => score[0]);
-      const introvertedFunctions = ["Ni", "Si", "Ti", "Fi"];
-      const extrovertedFunctions = ["Ne", "Se", "Te", "Fe"];
-      
-      const allIntroverted = firstThreeFunctions.every(func => introvertedFunctions.includes(func));
-      const allExtroverted = firstThreeFunctions.every(func => extrovertedFunctions.includes(func));
-      
-      if (allIntroverted) {
-        pointsHTML += "<p>你的首三功能都是内傾功能：<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;你是一個超級I人！</p>";
-      } else if (allExtroverted) {
-        pointsHTML += "<p>你的首三功能都是外傾功能：<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;你是一個超級E人！</p>";
-      }
-      
-      return pointsHTML;
-    }
-
-    // --------------- 新增：功能倾向分类 ---------------
-    const functionOrientations = {
-      Ne: "E", Ni: "I", Se: "E", Si: "I", 
-      Te: "E", Ti: "I", Fe: "E", Fi: "I"
-    };
-    
-    // --------------- 修改：functionGroups 定义 ---------------
-    // 统一使用一个定义，删除重复的定义
-    const functionGroups = {
-      Ne: "N", Ni: "N", Se: "S", Si: "S", 
-      Te: "T", Ti: "T", Fe: "F", Fi: "F"
-    };
-    
-    // --------------- 新增：判断功能链类型 ---------------
-    function getFunctionChainType(func1, func2) {
-      const domGroup = functionGroups[func1];
-      const auxGroup = functionGroups[func2];
-      
-      // 感知功能链 (N/S)
-      if ((domGroup === "N" || domGroup === "S") && 
-          (auxGroup === "N" || auxGroup === "S")) {
-        return "感知功能鏈";
-      }
-      
-      // 判断功能链 (T/F)
-      if ((domGroup === "T" || domGroup === "F") && 
-          (auxGroup === "T" || auxGroup === "F")) {
-        return "判斷功能鏈";
-      }
-      
-      // MBTI功能链 (根据标准功能链)
-      const mbtiChains = [
-        ['Ni', 'Te'], ['Ni', 'Fe'], ['Ne', 'Ti'], ['Ne', 'Fi'],
-        ['Si', 'Te'], ['Si', 'Fe'], ['Se', 'Ti'], ['Se', 'Fi'],
-        ['Ti', 'Ne'], ['Ti', 'Se'], ['Te', 'Ni'], ['Te', 'Si'],
-        ['Fi', 'Ne'], ['Fi', 'Se'], ['Fe', 'Ni'], ['Fe', 'Si']
-      ];
-      
-      if (mbtiChains.some(chain => chain[0] === func1 && chain[1] === func2)) {
-        return "MBTI功能鏈";
-      }
-      
-      return "一般功能鏈";
-    }
-    
 	// --------------- 新增：生成主导功能和辅助功能 ---------------
 	function generateFunctionAnalysis() {
 	  const topFunc = sortedScores[0];
@@ -440,24 +353,36 @@
 	    ([func, score]) => functionOrientations[func] !== topOrientation
 	  );
 	  
-	  // 6. 分组相反倾向功能 - 修正后的逻辑
-	  // 将辅助功能分为两组：Ni/Si为一组，Ti/Fi为一组
-	  const groupA = oppositeOrientationFuncs.filter(
-	    ([func, score]) => ["Ni", "Si"].includes(func)
-	  );
+	  // 6. 分组相反倾向功能 - 基于主导功能倾向性
+	  let groupA = []; // 感知功能组
+	  let groupB = []; // 判断功能组
 	  
-	  const groupB = oppositeOrientationFuncs.filter(
-	    ([func, score]) => ["Ti", "Fi"].includes(func)
-	  );
+	  if (topOrientation === "E") {
+	    // 主导功能是外倾，辅助功能应该是内倾
+	    groupA = oppositeOrientationFuncs.filter(
+	      ([func, score]) => ["Ni", "Si"].includes(func)
+	    );
+	    groupB = oppositeOrientationFuncs.filter(
+	      ([func, score]) => ["Ti", "Fi"].includes(func)
+	    );
+	  } else {
+	    // 主导功能是内倾，辅助功能应该是外倾
+	    groupA = oppositeOrientationFuncs.filter(
+	      ([func, score]) => ["Ne", "Se"].includes(func)
+	    );
+	    groupB = oppositeOrientationFuncs.filter(
+	      ([func, score]) => ["Te", "Fe"].includes(func)
+	    );
+	  }
 	  
-	  // 7. 选择辅助功能 - 修正后的逻辑
+	  // 7. 选择辅助功能
 	  const auxiliaryFunctions = [];
 	  
 	  // 从每组中选择最高分者
 	  let candidateA = groupA.length > 0 ? groupA[0] : null;
 	  let candidateB = groupB.length > 0 ? groupB[0] : null;
 	  
-	  // 8. 检查功能链匹配 - 修正后的逻辑
+	  // 8. 检查功能链匹配
 	  const functionChains = [];
 	  const matchedAuxFunctions = [];
 	  
@@ -466,6 +391,7 @@
 	    const auxFuncName = candidateA[0];
 	    let hasPerceptionOrJudgmentChain = false;
 	    let hasMBTIChain = false;
+	    let matchedDomFunc = null;
 	    
 	    for (const domFunc of dominantFunctions) {
 	      const domFuncName = domFunc[0];
@@ -473,9 +399,11 @@
 	      
 	      if (chainType === "感知功能鏈" || chainType === "判斷功能鏈") {
 	        hasPerceptionOrJudgmentChain = true;
+	        matchedDomFunc = domFuncName;
 	      }
 	      if (chainType === "MBTI功能鏈") {
 	        hasMBTIChain = true;
+	        matchedDomFunc = domFuncName;
 	      }
 	      
 	      if (hasPerceptionOrJudgmentChain && hasMBTIChain) {
@@ -484,13 +412,20 @@
 	        break;
 	      }
 	    }
+	    
+	    // 如果找到一种匹配，记录它
+	    if ((hasPerceptionOrJudgmentChain || hasMBTIChain) && !matchedAuxFunctions.includes(candidateA)) {
+	      functionChains.push(`${matchedDomFunc}-${auxFuncName}(${hasPerceptionOrJudgmentChain ? "感知/判斷功能鏈" : "MBTI功能鏈"})`);
+	      matchedAuxFunctions.push(candidateA);
+	    }
 	  }
 	  
 	  // 如果candidateA无法完成两种匹配，尝试用candidateB完成剩下的匹配
-	  if (candidateB && matchedAuxFunctions.length === 0) {
+	  if (candidateB && matchedAuxFunctions.length < 2) {
 	    const auxFuncName = candidateB[0];
 	    let hasPerceptionOrJudgmentChain = false;
 	    let hasMBTIChain = false;
+	    let matchedDomFunc = null;
 	    
 	    for (const domFunc of dominantFunctions) {
 	      const domFuncName = domFunc[0];
@@ -498,47 +433,26 @@
 	      
 	      if (chainType === "感知功能鏈" || chainType === "判斷功能鏈") {
 	        hasPerceptionOrJudgmentChain = true;
+	        matchedDomFunc = domFuncName;
 	      }
 	      if (chainType === "MBTI功能鏈") {
 	        hasMBTIChain = true;
+	        matchedDomFunc = domFuncName;
 	      }
 	      
 	      if (hasPerceptionOrJudgmentChain && hasMBTIChain) {
 	        functionChains.push(`${domFuncName}-${auxFuncName}(${chainType})`);
-	        matchedAuxFunctions.push(candidateB);
+	        if (!matchedAuxFunctions.some(af => af[0] === auxFuncName)) {
+	          matchedAuxFunctions.push(candidateB);
+	        }
 	        break;
 	      }
 	    }
-	  }
-	  
-	  // 如果只有一个候选，但仍然需要完成两种匹配
-	  if (matchedAuxFunctions.length === 0 && (candidateA || candidateB)) {
-	    const candidate = candidateA || candidateB;
-	    const auxFuncName = candidate[0];
 	    
-	    // 找出所有可能的匹配
-	    const possibleChains = [];
-	    for (const domFunc of dominantFunctions) {
-	      const domFuncName = domFunc[0];
-	      const chainType = getFunctionChainType(domFuncName, auxFuncName);
-	      possibleChains.push({domFuncName, auxFuncName, chainType});
-	    }
-	    
-	    // 检查是否能找到两种不同类型的匹配
-	    const perceptionOrJudgmentChain = possibleChains.find(chain => 
-	      chain.chainType === "感知功能鏈" || chain.chainType === "判斷功能鏈"
-	    );
-	    
-	    const mbtiChain = possibleChains.find(chain => 
-	      chain.chainType === "MBTI功能鏈"
-	    );
-	    
-	    if (perceptionOrJudgmentChain && mbtiChain) {
-	      functionChains.push(
-	        `${perceptionOrJudgmentChain.domFuncName}-${auxFuncName}(${perceptionOrJudgmentChain.chainType})`,
-	        `${mbtiChain.domFuncName}-${auxFuncName}(${mbtiChain.chainType})`
-	      );
-	      matchedAuxFunctions.push(candidate);
+	    // 如果找到一种匹配，记录它
+	    if ((hasPerceptionOrJudgmentChain || hasMBTIChain) && !matchedAuxFunctions.some(af => af[0] === auxFuncName)) {
+	      functionChains.push(`${matchedDomFunc}-${auxFuncName}(${hasPerceptionOrJudgmentChain ? "感知/判斷功能鏈" : "MBTI功能鏈"})`);
+	      matchedAuxFunctions.push(candidateB);
 	    }
 	  }
 	  
@@ -602,6 +516,7 @@
   </script>
 </body>
 </html>
+
 
 
 
