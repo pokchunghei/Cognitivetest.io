@@ -33,16 +33,20 @@
       width: 50px;
       text-align: left;
     }
-    .bar-fill {
-      height: 30px;
-      border-radius: 5px;
-      margin-left: 10px;
-      background-color: #2196F3;
-      color: white;
-      font-weight: bold;
-      padding-left: 6px;
-      line-height: 30px;
-    }
+
+	.bar-fill {
+	  height: 30px;
+	  border-radius: 5px;
+	  background-color: #2196F3;
+	  color: white;
+	  font-weight: bold;
+	  display: flex;
+	  align-items: center;
+	  padding-left: 10px;
+	  transition: width 0.3s ease;
+	  min-width: 30px; /* 确保即使分数为0也有最小宽度 */
+	}
+	  
     table {
       width: 100%;
       border-collapse: collapse;
@@ -198,20 +202,19 @@
     // 把兩行加進 table
     tableBody.appendChild(funcRow);
     tableBody.appendChild(scoreRow);
-    
-    // 生成棒形圖
-    sortedScores.forEach(([func, value]) => {
-      const bar = document.createElement('div');
-      bar.className = 'bar';
-      bar.innerHTML = `
-        <div class="bar-label">${func}</div>
-        <div class="bar-container">
-        <div class="bar-fill" style="width: ${value * 100 / maxScore}%;">
-          ${value}
-        </div>
-      `;
-      resultsDiv.appendChild(bar);
-    });
+
+		// 生成棒形圖
+	sortedScores.forEach(([func, value]) => {
+	  const bar = document.createElement('div');
+	  bar.className = 'bar';
+	  bar.innerHTML = `
+	    <div class="bar-label">${func}</div>
+	    <div class="bar-fill" style="width: ${value * 100 / maxScore}%;">
+	      ${value}
+	    </div>
+	  `;
+	  resultsDiv.appendChild(bar);
+	});
 
     // --------------- 2) MBTI 產生邏輯：找最高、次高分功能 → 兩個候選 ---------------
     // 依功能找出搭配的功能，組合出 MBTI
@@ -353,34 +356,7 @@
 	  
 	  return "一般功能鏈";
 	}
-	
-	// --------------- 新增：生成功能描述点 ---------------
-	function generateFunctionPoints() {
-	  let pointsHTML = "<p><strong>根據你較高分的幾個功能，你的性格特質是：</strong></p><ol>";
-	  let pointCount = 2; // 默认显示前两个功能
-	  
-	  // 检查是否需要添加第三个功能
-	  if (sortedScores.length > 2) {
-	    const secondThirdDiff = sortedScores[1][1] - sortedScores[2][1];
-	    const thirdFourthDiff = sortedScores.length > 3 ? sortedScores[2][1] - sortedScores[3][1] : 0;
-	    
-	    if (secondThirdDiff < thirdFourthDiff) {
-	      pointCount = 3;
-	    }
-	  }
-	  
-	  // 生成功能描述点
-	  for (let i = 0; i < pointCount && i < sortedScores.length; i++) {
-	    const funcName = sortedScores[i][0];
-	    const funcScore = sortedScores[i][1];
-	    const descriptionIndex = funcScore >= 20 ? 0 : 1;
-	    const description = functionDescriptions[funcName][descriptionIndex];
-	    
-	    pointsHTML += `<li><strong>${funcName}</strong>：${description}</li>`;
-	  }
-	  
-	  pointsHTML += "</ol>";
-	  
+
 	  // 检查是否为超级I人或E人
 	  if (sortedScores.length >= 3) {
 	    const firstThreeFunctions = sortedScores.slice(0, 3).map(score => score[0]);
@@ -399,7 +375,7 @@
 	  
 	  return pointsHTML;
 	}
-	
+
 	// --------------- 新增：生成主导功能和辅助功能 ---------------
 	function generateFunctionAnalysis() {
 	  const topFunc = sortedScores[0];
@@ -500,12 +476,6 @@
 	    }
 	  }
 	  
-	  // 如果MBTI功能链已经完成了两种匹配，直接返回结果
-	  const hasBothChains = functionChains.some(chain => chain.includes("MBTI功能鏈")) && 
-	                       (functionChains.some(chain => chain.includes("感知功能鏈")) || 
-	                        functionChains.some(chain => chain.includes("判斷功能鏈")));
-	  
-	  if (!hasBothChains) {
 	    // 处理感知/判断功能链
 	    // 首先尝试用candidateA
 	    if (candidateA && !matchedAuxFunctions.some(([func]) => func === candidateA[0])) {
@@ -552,7 +522,6 @@
 	        matchedAuxFunctions.push(candidateB);
 	      }
 	    }
-	  }
 	  
 	  // 9. 生成最终文本
 	  let finalText = "";
@@ -595,7 +564,7 @@
 	        }).join("，並與")}`;
 	      }
 	      
-	      finalText += `<p><strong>輔助功能${strength} ${func}</strong>${chainText ? ` ${chainText}` : ""}：${description}</p>`;
+	      finalText += `<p><strong>輔助功能${strength} ${func}</strong>，${chainText ? ` ${chainText}` : ""}：${description}</p>`;
 	    }
 	  }
 	  
@@ -615,6 +584,7 @@
   </script>
 </body>
 </html>
+
 
 
 
