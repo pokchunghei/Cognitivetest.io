@@ -112,8 +112,11 @@
         }
         
         .next-button {
-            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             margin-top: 30px;
+            position: relative;
         }
         
         .submit-button {
@@ -140,6 +143,14 @@
             transform: translateY(1px);
         }
         
+        .random-button {
+            background: linear-gradient(to right, #95a5a6, #7f8c8d) !important;
+            padding: 10px 20px !important;
+            font-size: 0.9em !important;
+            margin-left: auto !important;
+            display: block !important;
+        }
+        
         .progress-bar {
             height: 8px;
             background-color: #e6f2ff;
@@ -163,6 +174,54 @@
             margin-bottom: 10px;
         }
         
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .modal-buttons {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .modal-button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .modal-confirm {
+            background: linear-gradient(to right, #3498db, #2c77c4);
+            color: white;
+        }
+
+        .modal-cancel {
+            background-color: #e6e6e6;
+            color: #333;
+        }
+        
         @media (max-width: 768px) {
             .container {
                 padding: 15px;
@@ -179,6 +238,16 @@
             .submit-button {
                 padding: 12px 30px;
                 font-size: 1em;
+            }
+            
+            .next-button {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .random-button {
+                margin-left: 0 !important;
+                margin-top: 10px;
             }
         }
         
@@ -607,10 +676,23 @@
             </div>
         </div>
 
-		<div class="next-button">
-		  <button id="nextButton" class="submit-button">提交</button>
-		  <button id="randomButton" class="submit-button" style="background: linear-gradient(to right, #9b59b6, #8e44ad); margin-left: 10px;">随机生成结果</button>
-		</div>
+       <div class="next-button">
+            <button id="nextButton" class="submit-button">提交</button>
+            <button id="randomButton" class="random-button">随机生成结果</button>
+        </div>
+
+        <!-- 添加确认模态框 -->
+        <div id="randomModal" class="modal">
+            <div class="modal-content">
+                <h3>確認隨機生成分數？</h3>
+                <p>原來的問題答案將會消失。</p>
+                <div class="modal-buttons">
+                    <button id="modalConfirm" class="modal-button modal-confirm">確認</button>
+                    <button id="modalCancel" class="modal-button modal-cancel">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 	<script>
 	    // 更新所有滑桿的背景
@@ -699,8 +781,14 @@
 	        
 	        // 随机生成按钮功能
 	        document.getElementById('randomButton').addEventListener('click', function() {
+	            // 显示确认模态框
+	            document.getElementById('randomModal').style.display = 'flex';
+	        });
+	        
+	        // 模态框确认按钮
+	        document.getElementById('modalConfirm').addEventListener('click', function() {
 	            const scores = {
-	                Ne: Math.floor(Math.random() * 26), // 0-25的随机数
+	                Ne: Math.floor(Math.random() * 26),
 	                Ni: Math.floor(Math.random() * 26),
 	                Se: Math.floor(Math.random() * 26),
 	                Si: Math.floor(Math.random() * 26),
@@ -716,9 +804,23 @@
 	            // 跳转到结果页面
 	            window.location.href = 'result.html';
 	        });
+	        
+	        // 模态框取消按钮
+	        document.getElementById('modalCancel').addEventListener('click', function() {
+	            // 隐藏模态框
+	            document.getElementById('randomModal').style.display = 'none';
+	        });
+	        
+	        // 点击模态框背景也可以关闭
+	        document.getElementById('randomModal').addEventListener('click', function(e) {
+	            if (e.target === this) {
+	                document.getElementById('randomModal').style.display = 'none';
+	            }
+	        });
 	    });
 	</script>
 </body>
 </html>
+
 
 
