@@ -118,7 +118,7 @@
   </style>
 </head>
 <body>
-  <a href="page2.html" class="homelink">重新測試</a>
+  <a href="page2.html" class="home-link">重新測試</a>
   <div class="container">
     <h1>MBTI 測試結果</h1>
 
@@ -146,7 +146,7 @@
     </div>
 
     <div class="bottom-text">
-      <p><i>測試結果與16型人格不同？</i><br>當然了，<strong>16 personalities不是MBTI呀！</strong><br>MBTI由Ne、Si等功能組成，提供了内外傾維度<br>，比16型人格的單向N/S更準確。<br>（上方了解更多“MBTI是甚麽？）</p>
+      <p><i>測試結果與16型人格不同？</i><br>當然了，<strong>16 personalities不是MBTI呀！</strong><br>MBTI由Ne、Si等功能組成，提供了内外傾維度<br>，比16型人格的單向N/S更準確。<br>（上方了解更多"MBTI是甚麽？")</p>
     </div>
   </div>
 
@@ -203,7 +203,7 @@
     tableBody.appendChild(funcRow);
     tableBody.appendChild(scoreRow);
 
-		// 生成棒形圖
+	// 生成棒形圖
 	sortedScores.forEach(([func, value]) => {
 	  const bar = document.createElement('div');
 	  bar.className = 'bar';
@@ -357,24 +357,28 @@
 	  return "一般功能鏈";
 	}
 
-	  // 检查是否为超级I人或E人
-	  if (sortedScores.length >= 3) {
-	    const firstThreeFunctions = sortedScores.slice(0, 3).map(score => score[0]);
-	    const introvertedFunctions = ["Ni", "Si", "Ti", "Fi"];
-	    const extrovertedFunctions = ["Ne", "Se", "Te", "Fe"];
-	    
-	    const allIntroverted = firstThreeFunctions.every(func => introvertedFunctions.includes(func));
-	    const allExtroverted = firstThreeFunctions.every(func => extrovertedFunctions.includes(func));
-	    
-	    if (allIntroverted) {
-	      pointsHTML += "<p>你的首三功能都是内傾功能：<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;你是一個超級I人！</p>";
-	    } else if (allExtroverted) {
-	      pointsHTML += "<p>你的首三功能都是外傾功能：<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;你是一個超級E人！</p>";
-	    }
-	  }
-	  
-	  return pointsHTML;
-	}
+    // --------------- 新增：生成功能點分析 ---------------
+    function generateFunctionPoints() {
+      let pointsHTML = "";
+      
+      // 检查是否为超级I人或E人
+      if (sortedScores.length >= 3) {
+        const firstThreeFunctions = sortedScores.slice(0, 3).map(score => score[0]);
+        const introvertedFunctions = ["Ni", "Si", "Ti", "Fi"];
+        const extrovertedFunctions = ["Ne", "Se", "Te", "Fe"];
+        
+        const allIntroverted = firstThreeFunctions.every(func => introvertedFunctions.includes(func));
+        const allExtroverted = firstThreeFunctions.every(func => extrovertedFunctions.includes(func));
+        
+        if (allIntroverted) {
+          pointsHTML += "<p>你的首三功能都是内傾功能：<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;你是一個超級I人！</p>";
+        } else if (allExtroverted) {
+          pointsHTML += "<p>你的首三功能都是外傾功能：<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;你是一個超級E人！</p>";
+        }
+      }
+      
+      return pointsHTML;
+    }
 
 	// --------------- 新增：生成主导功能和辅助功能 ---------------
 	function generateFunctionAnalysis() {
@@ -476,52 +480,52 @@
 	    }
 	  }
 	  
-	    // 处理感知/判断功能链
-	    // 首先尝试用candidateA
-	    if (candidateA && !matchedAuxFunctions.some(([func]) => func === candidateA[0])) {
-	      const auxFuncName = candidateA[0];
-	      let chainType = null;
-	      let matchedDomFunc = null;
+	  // 处理感知/判断功能链
+	  // 首先尝试用candidateA
+	  if (candidateA && !matchedAuxFunctions.some(([func]) => func === candidateA[0])) {
+	    const auxFuncName = candidateA[0];
+	    let chainType = null;
+	    let matchedDomFunc = null;
+	    
+	    for (const domFunc of dominantFunctions) {
+	      const domFuncName = domFunc[0];
+	      const detectedChainType = getFunctionChainType(domFuncName, auxFuncName);
 	      
-	      for (const domFunc of dominantFunctions) {
-	        const domFuncName = domFunc[0];
-	        const detectedChainType = getFunctionChainType(domFuncName, auxFuncName);
-	        
-	        if (detectedChainType === "感知功能鏈" || detectedChainType === "判斷功能鏈") {
-	          chainType = detectedChainType;
-	          matchedDomFunc = domFuncName;
-	          break;
-	        }
-	      }
-	      
-	      if (chainType) {
-	        functionChains.push(`${matchedDomFunc}-${auxFuncName}(${chainType})`);
-	        matchedAuxFunctions.push(candidateA);
+	      if (detectedChainType === "感知功能鏈" || detectedChainType === "判斷功能鏈") {
+	        chainType = detectedChainType;
+	        matchedDomFunc = domFuncName;
+	        break;
 	      }
 	    }
 	    
-	    // 然后尝试用candidateB
-	    if (candidateB && !matchedAuxFunctions.some(([func]) => func === candidateB[0])) {
-	      const auxFuncName = candidateB[0];
-	      let chainType = null;
-	      let matchedDomFunc = null;
+	    if (chainType) {
+	      functionChains.push(`${matchedDomFunc}-${auxFuncName}(${chainType})`);
+	      matchedAuxFunctions.push(candidateA);
+	    }
+	  }
+	  
+	  // 然后尝试用candidateB
+	  if (candidateB && !matchedAuxFunctions.some(([func]) => func === candidateB[0])) {
+	    const auxFuncName = candidateB[0];
+	    let chainType = null;
+	    let matchedDomFunc = null;
+	    
+	    for (const domFunc of dominantFunctions) {
+	      const domFuncName = domFunc[0];
+	      const detectedChainType = getFunctionChainType(domFuncName, auxFuncName);
 	      
-	      for (const domFunc of dominantFunctions) {
-	        const domFuncName = domFunc[0];
-	        const detectedChainType = getFunctionChainType(domFuncName, auxFuncName);
-	        
-	        if (detectedChainType === "感知功能鏈" || detectedChainType === "判斷功能鏈") {
-	          chainType = detectedChainType;
-	          matchedDomFunc = domFuncName;
-	          break;
-	        }
-	      }
-	      
-	      if (chainType) {
-	        functionChains.push(`${matchedDomFunc}-${auxFuncName}(${chainType})`);
-	        matchedAuxFunctions.push(candidateB);
+	      if (detectedChainType === "感知功能鏈" || detectedChainType === "判斷功能鏈") {
+	        chainType = detectedChainType;
+	        matchedDomFunc = domFuncName;
+	        break;
 	      }
 	    }
+	    
+	    if (chainType) {
+	      functionChains.push(`${matchedDomFunc}-${auxFuncName}(${chainType})`);
+	      matchedAuxFunctions.push(candidateB);
+	    }
+	  }
 	  
 	  // 9. 生成最终文本
 	  let finalText = "";
@@ -584,22 +588,3 @@
   </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
