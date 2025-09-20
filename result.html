@@ -558,17 +558,17 @@
 	      
 	      // 找出相关的功能链
 	      const relevantChains = functionChains.filter(chain => chain.includes(func));
-	      
-	      let chainText = "";
-	      if (relevantChains.length > 0) {
-	        chainText = `與${relevantChains.map(chain => {
-	          const [domFunc] = chain.split('-');
-	          const chainType = chain.split('(')[1].replace(')', '');
-	          return `主導功能${domFunc}組成${chainType}`;
-	        }).join("，並與")}`;
-	      }
-	      
-	      finalText += `<p><strong>輔助功能${strength} ${func}</strong>，${chainText ? ` ${chainText}` : ""}：${description}</p>`;
+
+		  let chainText = "";
+		  if (relevantChains.length > 0) {
+		    chainText = `與${relevantChains.map(chain => {
+		      const [domFunc] = chain.split('-');
+		      const chainType = chain.split('(')[1].replace(')', '');
+		      return `主導功能${domFunc}組成${chainType} ${domFunc}-${func}`;
+		    }).join("，並與")}`;
+		  }
+		
+		  finalText += `<p><strong>輔助功能${strength} ${func}</strong>，${chainText ? `<i>${chainText}</i>` : ""}：${description}</p>`;
 	    }
 	  }
 	  
@@ -588,3 +588,4 @@
   </script>
 </body>
 </html>
+
