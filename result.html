@@ -199,16 +199,15 @@
     tableBody.appendChild(funcRow);
     tableBody.appendChild(scoreRow);
     
-    // 生成棒形圖 - 修复条形图显示
+    // 生成棒形圖
     sortedScores.forEach(([func, value]) => {
       const bar = document.createElement('div');
       bar.className = 'bar';
       bar.innerHTML = `
         <div class="bar-label">${func}</div>
         <div class="bar-container">
-          <div class="bar-fill" style="width: ${value * 100 / maxScore}%;">
-            <span class="bar-value">${value}</span>
-          </div>
+        <div class="bar-fill" style="width: ${value * 100 / maxScore}%;">
+          ${value}
         </div>
       `;
       resultsDiv.appendChild(bar);
@@ -616,6 +615,7 @@
   </script>
 </body>
 </html>
+
 
 
 
