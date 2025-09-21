@@ -463,8 +463,21 @@
 	    // 找出分数较低的那个作为辅助功能
 	    const [func1, func2] = mbtiFunctions;
 	    let mbtiAuxiliaryFunc, mbtiDominantFunc;
-	    
-	    if (scores[func1] > scores[func2]) {
+
+	    // 修复点：添加保护性检查，防止相同功能
+	    if (func1 === func2) {
+	      // 如果出现相同功能，根据MBTI类型逻辑选择正确的辅助功能
+	      if (['Ni', 'Si'].includes(func1)) {
+	        mbtiAuxiliaryFunc = (scores.Te >= scores.Fe) ? 'Te' : 'Fe';
+	      } else if (['Ne', 'Se'].includes(func1)) {
+	        mbtiAuxiliaryFunc = (scores.Ti >= scores.Fi) ? 'Ti' : 'Fi';
+	      } else if (['Ti', 'Fi'].includes(func1)) {
+	        mbtiAuxiliaryFunc = (scores.Ne >= scores.Se) ? 'Ne' : 'Se';
+	      } else if (['Te', 'Fe'].includes(func1)) {
+	        mbtiAuxiliaryFunc = (scores.Ni >= scores.Si) ? 'Ni' : 'Si';
+	      }
+	      mbtiDominantFunc = func1;
+	    } else if (scores[func1] > scores[func2]) {
 	      mbtiDominantFunc = func1;
 	      mbtiAuxiliaryFunc = func2;
 	    } else {
@@ -498,6 +511,9 @@
 	    
 	    for (const domFunc of dominantFunctions) {
 	      const domFuncName = domFunc[0];
+	      // 修复点：确保不是同一个功能
+	      if (domFuncName === auxFuncName) continue;
+			
 	      const detectedChainType = getFunctionChainType(domFuncName, auxFuncName);
 	      
 	      if (detectedChainType === "感知功能鏈" || detectedChainType === "判斷功能鏈") {
@@ -521,6 +537,9 @@
 	    
 	    for (const domFunc of dominantFunctions) {
 	      const domFuncName = domFunc[0];
+	      // 修复点：确保不是同一个功能
+	      if (domFuncName === auxFuncName) continue;
+			
 	      const detectedChainType = getFunctionChainType(domFuncName, auxFuncName);
 	      
 	      if (detectedChainType === "感知功能鏈" || detectedChainType === "判斷功能鏈") {
@@ -568,16 +587,21 @@
 	      // 找出相关的功能链
 	      const relevantChains = functionChains.filter(chain => chain.includes(func));
 
-		  let chainText = "";
-		  if (relevantChains.length > 0) {
-		    chainText = `與${relevantChains.map(chain => {
-		      const [domFunc] = chain.split('-');
-		      const chainType = chain.split('(')[1].replace(')', '');
-		      return `主導功能${domFunc}組成${chainType} ${domFunc}-${func}`;
-		    }).join("，並與")}`;
-		  }
-		
-		  finalText += `<p><strong>輔助功能${strength} ${func}</strong>，${chainText ? `<i>${chainText}</i>` : ""}：${description}</p>`;
+	      let chainText = "";
+	      if (relevantChains.length > 0) {
+	        chainText = `與${relevantChains.map(chain => {
+	          const [domFunc] = chain.split('-');
+	          const chainType = chain.split('(')[1].replace(')', '');
+	          // 修复点：过滤掉MBTI功能链中的重复功能显示
+	          if (domFunc === func) {
+	            return `主導功能${domFunc}組成MBTI功能鏈`;
+	          } else {
+	            return `主導功能${domFunc}組成${chainType} ${domFunc}-${func}`;
+	          }
+	        }).join("，並與")}`;
+	      }
+	    
+	      finalText += `<p><strong>輔助功能${strength} ${func}</strong>，${chainText ? `<i>${chainText}</i>` : ""}：${description}</p>`;
 	    }
 	  }
 	  
@@ -597,6 +621,7 @@
   </script>
 </body>
 </html>
+
 
 
 
