@@ -570,17 +570,15 @@
 	    finalText += `<p><strong>${order}功能 ${func}</strong>：${description}</p>`;
 	  }
 	  
-	  // 辅助功能描述 - 新增分數檢查：低於13分不顯示
+	  // 辅助功能描述 - 只在最後檢查分數，低於13分完全過濾掉
 	  if (matchedAuxFunctions.length > 0) {
-	    // 按分数排序辅助功能
-	    matchedAuxFunctions.sort((a, b) => b[1] - a[1]);
+	    // 先過濾掉所有低於13分的功能
+	    const filteredAuxFunctions = matchedAuxFunctions.filter(([func, score]) => score >= 13);
 	    
-	    for (const [func, score] of matchedAuxFunctions) {
-	      // 新增：檢查分數是否低於13分，如果是則跳過不顯示
-	      if (score < 13) {
-	        continue;
-	      }
-	      
+	    // 按分数排序過濾後的輔助功能
+	    filteredAuxFunctions.sort((a, b) => b[1] - a[1]);
+	    
+	    for (const [func, score] of filteredAuxFunctions) {
 	      const strength = score >= topFuncScore * 0.75 ? 
 	                      (Math.abs(score - topFuncScore) <= 3 ? "（較強）" : "") : 
 	                      "（較弱）";
@@ -590,7 +588,7 @@
 	      
 	      // 找出相关的功能链
 	      const relevantChains = functionChains.filter(chain => chain.includes(func));
-
+	
 	      let chainText = "";
 	      if (relevantChains.length > 0) {
 	        chainText = `與${relevantChains.map(chain => {
@@ -598,14 +596,14 @@
 	          const chainType = chain.split('(')[1].replace(')', '');
 	          // 修复点：过滤掉MBTI功能链中的重复功能显示
 	          if (domFunc === func) {
-	            return 主導功能${domFunc}組成MBTI功能鏈;
+	            return `主導功能${domFunc}組成MBTI功能鏈`;
 	          } else {
-	            return 主導功能${domFunc}組成${chainType} ${domFunc}-${func};
+	            return `主導功能${domFunc}組成${chainType} ${domFunc}-${func}`;
 	          }
 	        }).join("，並與")}`;
 	      }
 	    
-	      finalText += <p><strong>輔助功能${strength} ${func}</strong>，${chainText ? `<i>${chainText}</i> : ""}：${description}</p>`;
+	      finalText += `<p><strong>輔助功能${strength} ${func}</strong>，${chainText ? `<i>${chainText}</i>` : ""}：${description}</p>`;
 	    }
 	  }
 	  
@@ -625,6 +623,7 @@
   </script>
 </body>
 </html>
+
 
 
 
